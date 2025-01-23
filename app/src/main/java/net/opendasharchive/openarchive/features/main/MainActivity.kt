@@ -1,14 +1,18 @@
 package net.opendasharchive.openarchive.features.main
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.view.ViewTreeObserver
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
+import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
 import androidx.viewpager2.widget.ViewPager2
@@ -16,6 +20,7 @@ import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import net.opendasharchive.openarchive.R
+import net.opendasharchive.openarchive.core.logger.AppLogger
 import net.opendasharchive.openarchive.databinding.ActivityMainBinding
 import net.opendasharchive.openarchive.db.Project
 import net.opendasharchive.openarchive.db.Space
@@ -30,18 +35,26 @@ import net.opendasharchive.openarchive.features.media.PreviewActivity
 import net.opendasharchive.openarchive.features.onboarding.Onboarding23Activity
 import net.opendasharchive.openarchive.features.onboarding.SpaceSetupActivity
 import net.opendasharchive.openarchive.features.settings.FoldersActivity
-import net.opendasharchive.openarchive.features.settings.SpacesActivity
+import net.opendasharchive.openarchive.features.settings.passcode.AppConfig
+import net.opendasharchive.openarchive.features.spaces.SpacesActivity
+import net.opendasharchive.openarchive.services.snowbird.SnowbirdBridge
+import net.opendasharchive.openarchive.services.snowbird.service.SnowbirdService
 import net.opendasharchive.openarchive.upload.UploadService
 import net.opendasharchive.openarchive.util.AlertHelper
 import net.opendasharchive.openarchive.util.Prefs
 import net.opendasharchive.openarchive.util.ProofModeHelper
+import net.opendasharchive.openarchive.util.Utility
 import net.opendasharchive.openarchive.util.extensions.cloak
 import net.opendasharchive.openarchive.util.extensions.hide
 import net.opendasharchive.openarchive.util.extensions.show
+import org.koin.android.ext.android.inject
+import timber.log.Timber
 import java.text.NumberFormat
 
 
 class MainActivity : BaseActivity() {
+
+    private val appConfig by inject<AppConfig>()
 
     private var mMenuDelete: MenuItem? = null
 
@@ -78,6 +91,17 @@ class MainActivity : BaseActivity() {
                 }
             }
         }
+
+
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+        if (isGranted) {
+            Timber.d("Able to post notifications")
+        } else {
+            Timber.d("Need to explain")
+        }
+    }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -149,6 +173,33 @@ class MainActivity : BaseActivity() {
             ) // Pass the selected project ID
             folderResultLauncher.launch(intent)
         }
+
+
+        if (appConfig.snowbirdEnabled) {
+            
+            checkNotificationPermissions()
+
+            SnowbirdBridge.getInstance().initialize()
+            val intent = Intent(this, SnowbirdService::class.java)
+            startForegroundService(intent)
+
+            handleIntent(intent)
+        }
+    }
+
+    private fun handleIntent(intent: Intent) {
+        if (intent.action == Intent.ACTION_VIEW) {
+            val uri = intent.data
+            if (uri?.scheme == "save-veilid") {
+                processUri(uri)
+            }
+        }
+    }
+
+    private fun processUri(uri: Uri) {
+        val path = uri.path
+        val queryParams = uri.queryParameterNames.associateWith { uri.getQueryParameter(it) }
+        AppLogger.d("Path: $path, QueryParams: $queryParams")
     }
 
     private fun setupBottomNavBar() {
@@ -414,6 +465,51 @@ class MainActivity : BaseActivity() {
             } else {
                 addFolder()
             }
+        }
+    }
+
+    private fun checkNotificationPermissions() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            when {
+                ContextCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.POST_NOTIFICATIONS
+                ) == PackageManager.PERMISSION_GRANTED -> {
+                    Timber.d("We have notifications permissions")
+                }
+                shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS) -> {
+                    showNotificationPermissionRationale()
+                }
+                else -> {
+                    requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                }
+            }
+        }
+    }
+
+    private fun showNotificationPermissionRationale() {
+        Utility.showMaterialWarning(this, "Accept!") {
+            Timber.d("thing")
+        }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+
+        menuInflater.inflate(R.menu.menu_main, menu)
+
+        return super.onCreateOptionsMenu(menu)
+    }
+
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+//            R.id.snowbird_menu -> {
+//                val intent = Intent(this, SpaceSetupActivity::class.java)
+//                intent.putExtra("snowbird", true)
+//                startActivity(intent)
+//                true
+//            }
+            else -> super.onOptionsItemSelected(item)
         }
     }
 }

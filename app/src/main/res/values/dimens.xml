@@ -30,4 +30,6 @@
     <dimen name="grid_layout_item_top_margin">0dp</dimen>
     <dimen name="grid_layout_section_spacing">30dp</dimen>
     <dimen name="letter_text_size">20sp</dimen>
+
+    <dimen name="avatar_size">32dp</dimen>
 </resources>

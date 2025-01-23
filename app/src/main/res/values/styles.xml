@@ -39,6 +39,7 @@
         <item name="floatingActionButtonStyle">@style/Widget.App.FloatingActionButton</item>
         <item name="appBarLayoutStyle">@style/SaveApp.Widget.AppBarStyle</item>
         <item name="toolbarStyle">@style/SaveApp.Widget.MaterialToolbarStyle</item>
+        <item name="android:toolbarStyle">@style/SaveApp.Widget.MaterialToolbarStyle</item>
 
 
         <!--        Button Styles-->
@@ -140,6 +141,7 @@
 
     <style name="SaveApp.Widget.AppBarStyle" parent="Widget.Material3.AppBarLayout">
         <item name="android:background">@color/colorPrimary</item>
+        <item name="colorOnPrimary">@color/white</item>
     </style>
 
     <style name="SaveApp.Widget.MaterialToolbarStyle" parent="Widget.Material3.Toolbar">
@@ -149,6 +151,12 @@
         <item name="navigationIconTint">@color/white</item>
         <item name="android:gravity">center_horizontal</item>
         <item name="android:layout_gravity">center_horizontal</item>
+        <item name="materialThemeOverlay">@style/ThemeOverlay.SaveApp.Toolbar</item>
+    </style>
+
+    <style name="ThemeOverlay.SaveApp.Toolbar" parent="">
+        <!-- Tint the menu and overflow icons -->
+        <item name="colorControlNormal">@color/white</item>
     </style>
 
     <style name="OABottomBarButtonStyle" parent="Widget.MaterialComponents.Button.UnelevatedButton">
@@ -351,5 +359,9 @@
     <style name="BreadcrumbChipStyle" parent="Widget.Material3.Chip.Assist">
         <item name="chipBackgroundColor">@color/colorBackground</item>
         <item name="chipStrokeWidth">0dp</item>
+    </style>
+
+    <style name="ThinProgressBar" parent="Widget.MaterialComponents.CircularProgressIndicator">
+        <item name="android:thickness">2dp</item>
     </style>
 </resources>

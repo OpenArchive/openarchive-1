@@ -9,7 +9,7 @@ import androidx.fragment.app.setFragmentResult
 import net.opendasharchive.openarchive.databinding.FragmentSpaceSetupSuccessBinding
 import net.opendasharchive.openarchive.features.onboarding.BaseFragment
 
-class SpaceSetupSuccessFragment : BaseFragment() {
+class SpaceSetupSuccessFragment private constructor(): BaseFragment() {
     private lateinit var mBinding: FragmentSpaceSetupSuccessBinding
     private var message = ""
 

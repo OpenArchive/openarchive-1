@@ -19,6 +19,7 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.RUN_USER_INITIATED_JOBS" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC"/>
     <uses-permission android:name="android.permission.INTERNET" />
 
     <queries>
@@ -55,24 +56,11 @@
         android:theme="@style/Theme.SaveApp.Starting"
         tools:ignore="UnusedAttribute,LockedOrientationActivity"
         tools:replace="android:icon,android:allowBackup">
-        <!-- task affinity lets us define within which 'task' does a activity belong to.
+
+        <!--TODO: task affinity lets us define within which 'task' does a activity belong to.
         By default, the activity has the same task affinity as its root
         Trail of bits ticket: https://github.com/OpenArchive/OA-Trail-of-Bits/issues/23
         -->
-        <activity
-            android:name=".features.folders.BrowseFoldersActivity"
-            android:exported="false"
-            android:label="@string/browse_existing"
-            android:taskAffinity=""
-            android:theme="@style/SaveAppTheme.NoActionBar" />
-
-        <activity
-            android:name=".upload.UploadManagerActivity"
-            android:exported="false"
-            android:label="@string/title_activity_upload_manager"
-            android:taskAffinity=""
-            android:theme="@style/SaveAppTheme.NoActionBar" />
-
         <activity
             android:name=".features.main.MainActivity"
             android:exported="true"
@@ -103,7 +91,28 @@
                 <data android:mimeType="text/*" />
                 <data android:mimeType="video/*" />
             </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="save+dweb" />
+            </intent-filter>
         </activity>
+
+        <activity
+            android:name=".features.folders.BrowseFoldersActivity"
+            android:exported="false"
+            android:label="@string/browse_existing"
+            android:taskAffinity=""
+            android:theme="@style/SaveAppTheme.NoActionBar" />
+
+        <activity
+            android:name=".upload.UploadManagerActivity"
+            android:exported="false"
+            android:label="@string/title_activity_upload_manager"
+            android:taskAffinity=""
+            android:theme="@style/SaveAppTheme.NoActionBar" />
+
 
         <activity
             android:name=".services.webdav.WebDavActivity"
@@ -123,7 +132,7 @@
             android:theme="@style/SaveAppTheme.NoActionBar" />
 
         <activity
-            android:name=".features.settings.SpacesActivity"
+            android:name=".features.spaces.SpacesActivity"
             android:exported="true"
             android:label="@string/servers"
             android:theme="@style/SaveAppTheme.NoActionBar" />
@@ -154,6 +163,12 @@
             android:label="@string/preview_media"
             android:taskAffinity=""
             android:theme="@style/SaveAppTheme.NoActionBar" />
+
+        <activity
+            android:name=".features.main.QRScannerActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/zxing_CaptureTheme"
+            android:windowSoftInputMode="stateAlwaysHidden" />
 
         <activity
             android:name=".features.media.ReviewActivity"
@@ -237,7 +252,7 @@
 
         <meta-data
             android:name="VERSION"
-            android:value="36" />
+            android:value="37" />
 
         <provider
             android:name="androidx.core.content.FileProvider"
@@ -251,7 +266,7 @@
 
         <provider
             android:name=".provider.TorStatusContentProvider"
-            android:authorities="org.opendasharchive.safe.provider.tor"
+            android:authorities="${applicationId}.provider.tor"
             android:exported="false" />
 
         <service
@@ -259,6 +274,12 @@
             android:exported="false"
             android:foregroundServiceType="dataSync"
             android:permission="android.permission.BIND_JOB_SERVICE" />
+
+        <service
+            android:name=".services.snowbird.service.SnowbirdService"
+            android:foregroundServiceType="dataSync"
+            android:exported="false">
+        </service>
 
     </application>
 

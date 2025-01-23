@@ -56,6 +56,8 @@ data class Space(
             Type.GDRIVE -> {
                 name = GDriveConduit.NAME
             }
+
+            Type.RAVEN -> "Raven"
         }
     }
 
@@ -63,6 +65,7 @@ data class Space(
         WEBDAV(0, "WebDAV"),
         INTERNET_ARCHIVE(1, IaConduit.NAME),
         GDRIVE(4, GDriveConduit.NAME),
+        RAVEN(5, "Raven"),
     }
 
     enum class IconStyle {
@@ -176,6 +179,8 @@ data class Space(
             Type.INTERNET_ARCHIVE -> ContextCompat.getDrawable(context, R.drawable.ic_internet_archive) // ?.tint(color)
 
             Type.GDRIVE -> ContextCompat.getDrawable(context, R.drawable.logo_gdrive_outline) // ?.tint(color)
+
+            Type.RAVEN -> ContextCompat.getDrawable(context, R.drawable.snowbird) // ?.tint(color)
 
             else -> BitmapDrawable(context.resources, DrawableUtil.createCircularTextDrawable(initial, color))
 
