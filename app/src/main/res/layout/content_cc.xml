@@ -10,14 +10,15 @@
     android:orientation="vertical"
     android:padding="@dimen/activity_horizontal_margin"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context=".features.settings.EditFolderActivity"
-    tools:showIn="@layout/activity_space_setup">
+    tools:context=".features.onboarding.SpaceSetupActivity"
+    tools:background="@color/colorBackground"
+    tools:showIn="@layout/fragment_webdav_setup_license">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <androidx.appcompat.widget.SwitchCompat
+        <com.google.android.material.materialswitch.MaterialSwitch
             android:id="@+id/sw_cc"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -42,12 +43,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <androidx.appcompat.widget.SwitchCompat
+        <com.google.android.material.materialswitch.MaterialSwitch
             android:id="@+id/sw_nd"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
-            android:checked="false"
+            android:checked="true"
             android:showText="true"
             android:textOff="@string/answer_no"
             android:textOn="@string/answer_yes" />
@@ -67,7 +68,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <androidx.appcompat.widget.SwitchCompat
+        <com.google.android.material.materialswitch.MaterialSwitch
             android:id="@+id/sw_sa"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -92,7 +93,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <androidx.appcompat.widget.SwitchCompat
+        <com.google.android.material.materialswitch.MaterialSwitch
             android:id="@+id/sw_nc"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -111,19 +112,31 @@
 
     </RelativeLayout>
 
-    <TextView
-        android:id="@+id/tv_license"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        tools:text="https://creativecommons.org" />
-
-    <TextView
-        android:id="@+id/bt_learn_more"
+    <LinearLayout
+        android:layout_marginTop="32dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:text="@string/learn_more_about_creative_commons"
-        android:textColor="@color/c23_medium_grey" />
+        android:orientation="vertical">
+
+
+        <TextView
+            android:id="@+id/tv_license"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="@color/colorTertiary"
+            tools:text="https://creativecommons.org" />
+
+        <TextView
+            android:id="@+id/bt_learn_more"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:text="@string/learn_more_about_creative_commons"
+            android:textColor="@color/colorTertiary" />
+
+    </LinearLayout>
+
+
 
 </LinearLayout>

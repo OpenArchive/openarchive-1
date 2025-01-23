@@ -15,9 +15,9 @@ import timber.log.Timber
 import java.io.IOException
 import java.util.Date
 
-class BrowseFoldersViewModel : ViewModel() {
+data class Folder(val name: String, val modified: Date)
 
-    data class Folder(val name: String, val modified: Date)
+class BrowseFoldersViewModel : ViewModel() {
 
     private val mFolders = MutableLiveData<List<Folder>>()
 

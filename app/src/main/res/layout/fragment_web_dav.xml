@@ -1,24 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true"
+    android:paddingBottom="24dp"
+    tools:background="@color/colorBackground"
     tools:context=".services.webdav.WebDavFragment">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingHorizontal="8dp"
         android:paddingVertical="8dp"
-        android:paddingBottom="@dimen/activity_vertical_margin">
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
             android:id="@+id/email_login_form"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
+            android:paddingHorizontal="16dp"
             app:layout_constraintBottom_toTopOf="@id/button_bar"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
@@ -27,7 +33,9 @@
             <LinearLayout
                 android:id="@+id/header"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginVertical="24dp">
 
                 <ImageView
                     android:layout_width="48dp"
@@ -38,11 +46,12 @@
                     android:importantForAccessibility="no"
                     android:padding="12dp"
                     android:src="@drawable/ic_private_server"
-                    app:tint="@color/colorPrimary" />
+                    app:tint="@color/colorTertiary" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
                     android:orientation="vertical">
 
                     <TextView
@@ -52,6 +61,7 @@
                         android:text="@string/private_server"
                         android:textFontWeight="700"
                         android:textStyle="bold"
+                        android:visibility="gone"
                         tools:targetApi="p" />
 
                     <TextView
@@ -63,152 +73,207 @@
 
             </LinearLayout>
 
-            <TextView
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/activity_vertical_margin"
-                android:text="@string/server_info" />
+                android:layout_marginVertical="@dimen/activity_vertical_margin"
+                android:orientation="vertical">
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/server"
+                <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:text="@string/server_info" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
                     android:hint="@string/enter_url"
-                    android:inputType="textUri"
-                    android:maxLines="1"
-                    android:singleLine="true" />
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/name"
-                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/server_name_optional"
-                    android:inputType="textNoSuggestions"
-                    android:maxLines="1"
-                    android:singleLine="true" />
+                    android:paddingVertical="4dp"
+                    android:layout_marginBottom="8dp">
 
-            </com.google.android.material.textfield.TextInputLayout>
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/server"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textUri"
+                        android:maxLines="1"
+                        android:singleLine="true" />
 
-            <TextView
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:paddingVertical="4dp"
+                    android:layout_height="wrap_content">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/server_name_optional"
+                        android:inputType="textNoSuggestions"
+                        android:maxLines="1"
+                        android:singleLine="true" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/activity_vertical_margin"
-                android:text="@string/account" />
+                android:layout_marginVertical="@dimen/activity_vertical_margin"
+                android:orientation="vertical">
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/username"
+                <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/prompt_email"
-                    android:inputType="textNoSuggestions"
-                    android:maxLines="1"
-                    android:singleLine="true" />
+                    android:layout_marginBottom="8dp"
+                    android:text="@string/account" />
 
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/password_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:passwordToggleDrawable="@drawable/show_password_selector"
-                app:passwordToggleEnabled="true">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/password"
+                <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/prompt_password"
-                    android:imeActionId="6"
-                    android:imeActionLabel="@string/action_sign_in_short"
-                    android:imeOptions="actionUnspecified"
-                    android:inputType="textPassword"
-                    android:maxLines="1"
-                    android:singleLine="true" />
+                    android:paddingVertical="4dp"
+                    android:layout_marginBottom="8dp">
 
-            </com.google.android.material.textfield.TextInputLayout>
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/username"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/prompt_email"
+                        android:inputType="textNoSuggestions"
+                        android:maxLines="1"
+                        android:singleLine="true" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/password_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingVertical="4dp"
+                    app:endIconMode="password_toggle">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/password"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/prompt_password"
+                        android:imeActionId="6"
+                        android:imeActionLabel="@string/action_sign_in_short"
+                        android:imeOptions="actionDone"
+                        android:inputType="textPassword"
+                        android:maxLines="1"
+                        android:singleLine="true" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+            </LinearLayout>
+
 
         </LinearLayout>
 
+    </ScrollView>
+
+
+    <LinearLayout
+        android:id="@+id/button_bar_edit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        android:visibility="visible"
+        android:weightSum="2"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
         <LinearLayout
-            android:id="@+id/button_bar_edit"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
+            android:gravity="center"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingTop="@dimen/activity_vertical_margin"
-            android:weightSum="2"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent">
+            android:layout_weight="1">
 
             <Button
                 android:id="@+id/bt_remove"
                 style="?android:attr/buttonBarButtonStyle"
-                android:layout_width="0dp"
                 android:textColor="@color/colorDanger"
-                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
                 android:drawableStart="@drawable/ic_delete_danger_24dp"
-                android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
-                android:layout_weight="1"
-                android:text="@string/remove_from_app" />
-
-            <Button
-                android:id="@+id/bt_license"
-                android:layout_width="0dp"
+                android:drawableTint="@color/colorDanger"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
-                android:layout_weight="1"
-                android:text="Licenses"
-                style="?android:attr/buttonBarButtonStyle"
-                tools:ignore="ButtonStyle" />
+                android:text="@string/remove_from_app" />
 
         </LinearLayout>
 
         <LinearLayout
-            android:visibility="gone"
-            android:id="@+id/button_bar"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
+            android:gravity="center"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingTop="@dimen/activity_vertical_margin"
-            android:weightSum="2"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent">
+            android:layout_weight="1">
+
+            <Button
+                android:id="@+id/bt_license"
+                style="?android:attr/buttonBarButtonStyle"
+                android:textColor="@color/colorTertiary"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Licenses" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/button_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        android:visibility="gone"
+        android:weightSum="2"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <LinearLayout
+            android:textColor="@color/colorText"
+            android:layout_width="0dp"
+            android:gravity="center"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
+            android:layout_weight="1">
 
             <Button
                 android:id="@+id/bt_cancel"
                 style="?android:attr/buttonBarButtonStyle"
-                android:layout_width="0dp"
+                android:textColor="@color/colorText"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
-                android:layout_weight="1"
                 android:text="@string/back" />
-
-            <Button
-                android:id="@+id/bt_authenticate"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
-                android:layout_weight="1"
-                android:text="@string/action_next"
-                style="@style/OAMaterialSignInButtonStyle"
-                tools:ignore="ButtonStyle" />
 
         </LinearLayout>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</ScrollView>
+        <LinearLayout
+            android:layout_width="0dp"
+            android:gravity="center"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
+            android:layout_weight="1"
+            tools:ignore="ButtonStyle">
+            <Button
+                android:id="@+id/bt_authenticate"
+                android:backgroundTint="@color/buttonBackground"
+                android:paddingHorizontal="24dp"
+                android:paddingVertical="16dp"
+                style="@style/Widget.Material3.Button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/action_next" />
+        </LinearLayout>
+
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

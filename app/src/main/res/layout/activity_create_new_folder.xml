@@ -5,27 +5,24 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:filterTouchesWhenObscured="true"
+    tools:background="@color/colorBackground"
     tools:context="net.opendasharchive.openarchive.features.folders.CreateNewFolderActivity">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:theme="@style/ThemeOverlay.AppCompat.DayNight.ActionBar"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <include
+        android:id="@+id/app_bar_layout"
+        layout="@layout/common_app_bar" />
 
     <TextView
         android:id="@+id/label"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
+        android:layout_marginTop="@dimen/activity_horizontal_margin"
         android:text="@string/folder_name"
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/toolbar" />
+        app:layout_constraintTop_toBottomOf="@id/app_bar_layout" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/folder_name_container"
@@ -42,7 +39,7 @@
             android:id="@+id/new_folder"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/create_folder_name"
+            android:hint="Folder Name"
             android:imeOptions="actionDone"
             android:inputType="textNoSuggestions" />
 

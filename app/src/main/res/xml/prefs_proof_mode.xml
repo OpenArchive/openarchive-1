@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
     <SwitchPreferenceCompat
+        android:layout="@layout/custom_preference_switch"
+        app:layout="@layout/custom_preference_switch"
         app:key="use_proofmode"
         app:defaultValue="false"
         app:title="@string/prefs_use_proofmode_title"
@@ -22,8 +25,13 @@
 <!--        app:summary="@string/prefs_share_proofmode_summary" />-->
 
     <Preference
+        android:layout="@layout/custom_preference_info"
+        app:iconSpaceReserved="false"
+        android:iconSpaceReserved="false"
+        app:layout="@layout/custom_preference"
         app:selectable="false"
         app:allowDividerAbove="true"
-        app:summary="@string/proofmode_permissions_explanation" />
+        android:title="@string/proofmode_permissions_explanation"
+        app:title="@string/proofmode_permissions_explanation" />
 
 </PreferenceScreen>

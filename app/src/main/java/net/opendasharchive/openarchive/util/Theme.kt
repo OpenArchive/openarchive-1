@@ -45,7 +45,7 @@ enum class Theme(val mode: Int) {
          * @param name: Theme name, case insensitive.
          */
         fun get(name: String?): Theme {
-            return values().firstOrNull { it.name.uppercase() == name?.uppercase() } ?: SYSTEM
+            return entries.firstOrNull { it.name.uppercase() == name?.uppercase() } ?: SYSTEM
         }
     }
 }

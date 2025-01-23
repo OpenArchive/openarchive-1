@@ -8,21 +8,16 @@
     android:filterTouchesWhenObscured="true"
     tools:context=".features.media.ReviewActivity">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <include
+        android:id="@+id/common_app_bar"
+        layout="@layout/common_app_bar" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        app:layout_constraintTop_toBottomOf="@id/common_app_bar"
         app:layout_constraintBottom_toBottomOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -151,7 +146,7 @@
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/metadata"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        app:layout_constraintTop_toBottomOf="@id/common_app_bar"
         tools:ignore="HardcodedText" />
 
     <com.google.android.material.button.MaterialButton
@@ -167,7 +162,7 @@
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/metadata"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        app:layout_constraintTop_toBottomOf="@id/common_app_bar"
         tools:ignore="HardcodedText" />
 
     <androidx.constraintlayout.widget.ConstraintLayout

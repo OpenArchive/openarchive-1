@@ -10,7 +10,6 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
 import com.bumptech.glide.Glide
-import com.facebook.drawee.view.SimpleDraweeView
 import com.github.derlio.waveform.SimpleWaveformView
 import com.squareup.picasso.Picasso
 import net.opendasharchive.openarchive.R
@@ -67,8 +66,10 @@ class ReviewActivity : BaseActivity(), View.OnClickListener {
         mBinding = ActivityReviewBinding.inflate(layoutInflater)
         setContentView(mBinding.root)
 
-        setSupportActionBar(mBinding.toolbar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        setupToolbar(
+            title = getString(R.string.edit_media_info),
+            showBackButton = true
+        )
 
         mStore = intent.getLongArrayExtra(EXTRA_CURRENT_MEDIA_ID)
             ?.map { Media.get(it) }?.filterNotNull() ?: emptyList()
@@ -166,12 +167,12 @@ class ReviewActivity : BaseActivity(), View.OnClickListener {
 
     override fun onClick(view: View?) {
         when (view) {
-            mBinding.waveform, mBinding.image -> {
-                if (mMedia?.mimeType?.startsWith("image") == true) {
-                    val draweeView = SimpleDraweeView(this)
-                    draweeView.setImageURI(mMedia?.fileUri)
-                }
-            }
+//            mBinding.waveform, mBinding.image -> {
+//                if (mMedia?.mimeType?.startsWith("image") == true) {
+//                    val draweeView = SimpleDraweeView(this)
+//                    draweeView.setImageURI(mMedia?.fileUri)
+//                }
+//            }
             mBinding.btFlag -> {
                 showFirstTimeFlag()
 
@@ -285,7 +286,11 @@ class ReviewActivity : BaseActivity(), View.OnClickListener {
     private fun showFirstTimeFlag() {
         if (Prefs.flagHintShown) return
 
-        AlertHelper.show(this, R.string.popup_flag_desc, R.string.popup_flag_title)
+        AlertHelper.show(
+            context = this,
+            message = R.string.popup_flag_desc,
+            title = R.string.popup_flag_title
+        )
 
         Prefs.flagHintShown = true
     }

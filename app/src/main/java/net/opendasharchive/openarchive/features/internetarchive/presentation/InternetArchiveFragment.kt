@@ -6,16 +6,17 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.compose.ui.platform.ComposeView
 import androidx.core.os.bundleOf
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResult
 import net.opendasharchive.openarchive.db.Space
 import net.opendasharchive.openarchive.features.internetarchive.presentation.components.IAResult
 import net.opendasharchive.openarchive.features.internetarchive.presentation.components.bundleWithNewSpace
 import net.opendasharchive.openarchive.features.internetarchive.presentation.components.bundleWithSpaceId
 import net.opendasharchive.openarchive.features.internetarchive.presentation.components.getSpace
+import net.opendasharchive.openarchive.features.onboarding.BaseFragment
+import net.opendasharchive.openarchive.features.onboarding.ToolbarConfigurable
 
 @Deprecated("only used for backward compatibility")
-class InternetArchiveFragment : Fragment() {
+class InternetArchiveFragment : BaseFragment(), ToolbarConfigurable {
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -58,4 +59,7 @@ class InternetArchiveFragment : Fragment() {
         @JvmStatic
         fun newInstance() = newInstance(args = bundleWithNewSpace())
     }
+
+    override fun getToolbarTitle() = "Internet Archive"
+    override fun shouldShowBackButton() = true
 }

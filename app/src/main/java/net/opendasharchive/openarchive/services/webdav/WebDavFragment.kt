@@ -9,7 +9,6 @@ import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import androidx.core.os.bundleOf
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResult
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.CoroutineScope
@@ -19,6 +18,7 @@ import net.opendasharchive.openarchive.BuildConfig
 import net.opendasharchive.openarchive.R
 import net.opendasharchive.openarchive.databinding.FragmentWebDavBinding
 import net.opendasharchive.openarchive.db.Space
+import net.opendasharchive.openarchive.features.onboarding.BaseFragment
 import net.opendasharchive.openarchive.services.SaveClient
 import net.opendasharchive.openarchive.services.internetarchive.Util
 import net.opendasharchive.openarchive.util.AlertHelper
@@ -31,7 +31,7 @@ import okhttp3.Response
 import java.io.IOException
 import kotlin.coroutines.suspendCoroutine
 
-class WebDavFragment : Fragment() {
+class WebDavFragment : BaseFragment() {
     private var mSpaceId: Long? = null
     private lateinit var mSpace: Space
 
@@ -51,7 +51,7 @@ class WebDavFragment : Fragment() {
 
         mSpaceId = arguments?.getLong(ARG_SPACE_ID) ?: ARG_VAL_NEW_SPACE
 
-        if (ARG_VAL_NEW_SPACE != mSpaceId) {
+        if (mSpaceId != ARG_VAL_NEW_SPACE) {
             // setup views for editing and existing space
 
             mSpace = Space.get(mSpaceId!!) ?: Space(Space.Type.WEBDAV)
@@ -78,7 +78,6 @@ class WebDavFragment : Fragment() {
 //                mSpace.useChunking = useChunking
 //                mSpace.save()
 //            }
-
 
 
             binding.btRemove.setOnClickListener {
@@ -154,12 +153,6 @@ class WebDavFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mSnackbar = binding.root.makeSnackBar(getString(R.string.login_activity_logging_message))
-
-        if (BuildConfig.DEBUG) {
-            binding.server.setText("https://nx27277.your-storageshare.de/")
-            binding.username.setText("Upul")
-            binding.password.setText("J7wc(ka_4#9!13h&")
-        }
     }
 
     private fun fixSpaceUrl(url: CharSequence?): Uri? {
@@ -356,5 +349,11 @@ class WebDavFragment : Fragment() {
 
         @JvmStatic
         fun newInstance() = newInstance(ARG_VAL_NEW_SPACE)
+    }
+
+    override fun getToolbarTitle(): String = if (mSpaceId == ARG_VAL_NEW_SPACE) {
+        "Add Private Server"
+    } else {
+        "Edit Private Server"
     }
 }

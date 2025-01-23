@@ -15,7 +15,7 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="end"
-        android:background="@color/colorPrimary">
+        android:background="@color/colorTertiary">
 
         <Button
             android:id="@+id/skip_button"
@@ -25,7 +25,7 @@
             android:layout_gravity="top|center_horizontal"
             android:layout_marginTop="24dp"
             android:text="@string/skip"
-            android:textColor="@color/colorBackground" />
+            android:textColor="@color/colorOnPrimary" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab"
@@ -34,9 +34,9 @@
             android:layout_gravity="bottom|end"
             android:layout_margin="24dp"
             android:contentDescription="@string/next"
-            app:backgroundTint="@color/colorPrimaryBright"
+            app:backgroundTint="@color/colorPrimaryContainer"
             app:srcCompat="@drawable/ic_arrow_right"
-            app:tint="@color/colorBackground" />
+            app:tint="@color/colorOnPrimary" />
     </FrameLayout>
 
     <LinearLayout

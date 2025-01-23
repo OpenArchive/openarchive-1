@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true"
+    tools:background="@color/colorBackground"
     tools:context=".services.webdav.WebDavSetupLicenseFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -24,18 +25,20 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/description_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
+                android:layout_margin="20dp"
                 android:gravity="center"
-                android:id="@+id/description_text"
+                android:autoLink="web"
                 android:text="Tell us a little more\nabout your new server"
-                android:textColor="@color/colorOnBackgroundTonedDown"
+
                 android:textSize="18sp" />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="24dp">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/name"
@@ -55,7 +58,6 @@
 
         </LinearLayout>
 
-
         <LinearLayout
             android:id="@+id/button_bar"
             android:layout_width="match_parent"
@@ -67,26 +69,47 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent">
 
-            <Button
-                android:visibility="invisible"
-                android:id="@+id/bt_cancel"
-                style="?android:attr/buttonBarButtonStyle"
+            <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
                 android:layout_weight="1"
-                android:text="@string/back" />
+                android:gravity="center"
+                android:textColor="@color/colorText">
 
-            <Button
-                android:id="@+id/bt_next"
-                style="@style/OAMaterialSignInButtonStyle"
+                <Button
+                    android:id="@+id/bt_cancel"
+                    android:visibility="invisible"
+                    style="?android:attr/buttonBarButtonStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/back"
+                    android:textColor="@color/colorText" />
+
+            </LinearLayout>
+
+
+            <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
                 android:layout_weight="1"
-                android:text="@string/action_next"
-                tools:ignore="ButtonStyle" />
+                android:gravity="center"
+                tools:ignore="ButtonStyle">
+
+                <Button
+                    android:id="@+id/bt_next"
+                    style="@style/Widget.Material3.Button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="@color/buttonBackground"
+                    android:paddingHorizontal="24dp"
+                    android:paddingVertical="16dp"
+                    android:text="@string/action_next" />
+            </LinearLayout>
 
         </LinearLayout>
+
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

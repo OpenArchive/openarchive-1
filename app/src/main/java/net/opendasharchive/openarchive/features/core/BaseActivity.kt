@@ -3,6 +3,8 @@ package net.opendasharchive.openarchive.features.core
 import android.view.MotionEvent
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.material.appbar.MaterialToolbar
+import net.opendasharchive.openarchive.R
 import net.opendasharchive.openarchive.util.Prefs
 
 abstract class BaseActivity : AppCompatActivity() {
@@ -37,6 +39,27 @@ abstract class BaseActivity : AppCompatActivity() {
             )
         } else {
             window.clearFlags(WindowManager.LayoutParams.FLAG_SECURE)
+        }
+    }
+
+    fun setupToolbar(
+        title: String = "",
+        subtitle: String? = null,
+        showBackButton: Boolean = true
+    ) {
+        val toolbar: MaterialToolbar = findViewById(R.id.common_toolbar)
+        setSupportActionBar(toolbar)
+        supportActionBar?.title = title
+
+        if (subtitle != null) {
+            supportActionBar?.subtitle = subtitle
+        }
+
+        if (showBackButton) {
+            supportActionBar?.setDisplayHomeAsUpEnabled(true)
+            toolbar.setNavigationOnClickListener { onBackPressedDispatcher.onBackPressed() }
+        } else {
+            supportActionBar?.setDisplayHomeAsUpEnabled(false)
         }
     }
 }

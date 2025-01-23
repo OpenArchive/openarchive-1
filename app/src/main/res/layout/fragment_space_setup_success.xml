@@ -39,23 +39,28 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:src="@drawable/hands_mobile"
+                android:importantForAccessibility="no"
+                android:src="@drawable/hands_mobile_updated"
+                android:paddingVertical="32dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/success_message"
-                android:importantForAccessibility="no" />
+                app:layout_constraintTop_toBottomOf="@id/success_message" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/bt_authenticate"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="@dimen/activity_row_padding"
             android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
+            android:padding="@dimen/activity_row_padding"
             android:text="@string/action_continue"
+            android:textColor="@color/white"
+            app:backgroundTint="@color/colorTertiary"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             tools:ignore="ButtonStyle" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

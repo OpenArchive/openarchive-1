@@ -12,6 +12,7 @@ import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import net.opendasharchive.openarchive.R
 import net.opendasharchive.openarchive.databinding.ActivityOnboarding23InstructionsBinding
 import net.opendasharchive.openarchive.features.core.BaseActivity
+import net.opendasharchive.openarchive.features.main.MainActivity
 import net.opendasharchive.openarchive.util.Prefs
 
 class Onboarding23InstructionsActivity : BaseActivity() {
@@ -119,6 +120,8 @@ class Onboarding23InstructionsActivity : BaseActivity() {
 
     private fun done() {
         Prefs.didCompleteOnboarding = true
-        startActivity(Intent(this, SpaceSetupActivity::class.java))
+        // We are moving space setup to MainActivity
+        startActivity(Intent(this, MainActivity::class.java))
+        finish()
     }
 }

@@ -3,9 +3,12 @@ package net.opendasharchive.openarchive.core.presentation.theme
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
+import net.opendasharchive.openarchive.R
 
 private val c23_nav_drawer_night = Color(0xff101010)
 private val c23_darker_grey = Color(0xff212021)
@@ -26,6 +29,10 @@ private val c23_teal_20 = Color(0xff003530) // v=20.6 -->
 private val c23_teal_10 = Color(0xff001b19) // v=10.6 -->
 private val c23_powder_blue = Color(0xffaae6e1)
 
+private val inputBackgroundLight = Color(0xfffffbf0)
+private val inputBackgroundDark = Color(0xff212021)
+private val darkPrimary = Color(0xff000A0A)
+
 @Immutable
 data class ColorTheme(
     val material: ColorScheme,
@@ -36,7 +43,8 @@ data class ColorTheme(
     val onDisabledContainer: Color = c23_light_grey,
 )
 
-private val LightColorScheme = ColorTheme(
+@Composable
+internal fun lightColorScheme() = ColorTheme(
     material = lightColorScheme(
 
         primary = c23_teal,
@@ -59,8 +67,8 @@ private val LightColorScheme = ColorTheme(
         errorContainer = Color.Red,
         onErrorContainer = Color.Black,
 
-        background = Color.White,
-        onBackground = Color.Black,
+        background = colorResource(R.color.colorBackground),
+        onBackground = colorResource(R.color.colorOnBackground),
 
         surface = c23_light_grey,
         onSurface = Color.Black,
@@ -76,13 +84,15 @@ private val LightColorScheme = ColorTheme(
         scrim = c23_light_grey,
         surfaceBright = c23_light_grey,
         surfaceContainer = Color.White,
+        surfaceContainerHighest = inputBackgroundLight,
         surfaceDim = c23_light_grey
     ),
 )
 
-private val DarkColorScheme = ColorTheme(
+@Composable
+internal fun darkColorScheme() = ColorTheme(
     material = darkColorScheme(
-        primary = c23_teal,
+        primary = darkPrimary,
         onPrimary = Color.Black,
         primaryContainer = c23_teal,
         onPrimaryContainer = Color.White,
@@ -102,8 +112,8 @@ private val DarkColorScheme = ColorTheme(
         errorContainer = Color.Red,
         onErrorContainer = Color.Black,
 
-        background = Color.Black,
-        onBackground = Color.White,
+        background = colorResource(R.color.colorBackground),
+        onBackground = colorResource(R.color.colorOnBackground),
 
         surface = c23_darker_grey,
         onSurface = Color.White,
@@ -119,11 +129,11 @@ private val DarkColorScheme = ColorTheme(
         scrim = c23_light_grey,
         surfaceBright = c23_grey,
         surfaceContainer = c23_medium_grey,
+        surfaceContainerHighest = inputBackgroundDark,
         surfaceDim = c23_dark_grey
     ),
 )
 
-fun getThemeColors(isDarkTheme: Boolean) = if (isDarkTheme) DarkColorScheme else LightColorScheme
-
-val LocalColors = staticCompositionLocalOf { LightColorScheme }
-
+val LocalColors = staticCompositionLocalOf<ColorTheme> {
+    error("LocalColors not provided. Wrap your composables in the Theme function.")
+}

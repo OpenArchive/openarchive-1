@@ -74,22 +74,41 @@
 
     <!-- theme day colors -->
 
-    <color name="colorBackground">@color/white</color>
+    <color name="colorBackground">#F5F1E7</color>
     <color name="colorOnBackground">@color/black</color>
     <color name="colorOnBackgroundTonedDown">@color/c23_grey</color>
     <color name="colorOnBackgroundLowContrast">@color/c23_grey</color>
-    <color name="colorOnPrimary">@color/white</color>
-    <color name="colorOnPrimaryTonedDown">#ffffff</color>
+
     <color name="colorPrimary">@color/c23_teal</color>
+    <color name="colorOnPrimary">@color/white</color>
+    <color name="colorPrimaryContainer">@color/c23_teal</color>
+    <color name="colorOnPrimaryContainer">@color/black</color>
+
+    <color name="colorOnPrimaryTonedDown">#ffffff</color>
     <color name="colorPrimaryDark">@color/c23_teal_40</color>
     <color name="colorPrimaryBright">@color/c23_powder_blue</color>
+    <color name="colorSecondary">@color/c23_teal_40</color>
+    <color name="colorOnSecondary">@color/black</color>
+    <color name="colorSecondaryContainer">@color/c23_teal_90</color>
+    <color name="colorOnSecondaryContainer">@color/black</color>
+    <color name="colorSecondaryDark">@color/c23_teal_30</color>
+    <color name="colorSecondaryBright">@color/c23_teal_60</color>
+
+    <color name="colorSurface">#F5F1E7</color>
+    <color name="colorOnSurface">@color/c23_dark_grey</color>
+
+    <color name="colorTertiary">@color/c23_teal_50</color>
     <color name="colorText">@color/c23_dark_grey</color>
 
+    <color name="colorError">@color/red</color>
+
     <!-- custom day colors -->
+    <color name="inputBackground">#FFFBF0</color>
+    <color name="buttonBackground">@color/c23_teal_60</color>
 
     <color name="colorBottomNavbar">@color/colorPrimary</color>
     <color name="colorOnBottomNavbar">@color/colorOnBackground</color>
-    <color name="colorAddButton">@color/colorBackground</color>
+    <color name="colorAddButton">@color/colorOnPrimary</color>
     <color name="colorOnAddButton">@color/colorOnBackground</color>
     <color name="colorNavigationDrawerBackground">@color/colorBackground</color>
     <color name="colorOnboarding23GetStarted">@color/colorOnBackground</color>

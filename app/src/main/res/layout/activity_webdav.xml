@@ -9,16 +9,10 @@
     android:orientation="vertical"
     tools:context="net.opendasharchive.openarchive.services.webdav.WebDavActivity">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:focusable="false"
-        android:theme="@style/ThemeOverlay.AppCompat.DayNight.ActionBar"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:title="@string/private_server" />
+
+    <include
+        android:id="@+id/common_app_bar"
+        layout="@layout/common_app_bar" />
 
 
     <androidx.fragment.app.FragmentContainerView
@@ -30,7 +24,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/toolbar" />
+        app:layout_constraintTop_toBottomOf="@id/common_app_bar" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

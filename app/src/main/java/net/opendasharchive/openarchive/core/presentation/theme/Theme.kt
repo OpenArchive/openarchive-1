@@ -13,7 +13,7 @@ fun Theme(
 ) {
     val isDarkTheme by rememberUpdatedState(newValue = isSystemInDarkTheme())
 
-    val colors = getThemeColors(isDarkTheme)
+    val colors = if (isDarkTheme) darkColorScheme() else lightColorScheme()
 
     val dimensions = getThemeDimensions(isDarkTheme)
 
@@ -23,7 +23,8 @@ fun Theme(
     ) {
         MaterialTheme(
             colorScheme = colors.material,
-            content = content
+            content = content,
+            shapes = Shapes
         )
     }
 }

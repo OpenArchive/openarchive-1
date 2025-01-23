@@ -1,336 +1,334 @@
-<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    tools:background="@color/colorBackground"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:filterTouchesWhenObscured="true"
-    android:fitsSystemWindows="true"
-    tools:openDrawer="end">
+    android:layout_height="match_parent">
 
-    <androidx.coordinatorlayout.widget.CoordinatorLayout
+
+    <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary">
 
-        <com.google.android.material.appbar.AppBarLayout
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/colorPrimary">
+            <!--            app:layout_scrollFlags="scroll|enterAlways"-->
 
-            <androidx.appcompat.widget.Toolbar
-                android:id="@+id/toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize">
+            <ImageView
+                android:layout_width="61dp"
+                android:layout_height="34dp"
+                android:layout_gravity="center"
+                android:importantForAccessibility="no"
+                android:src="@drawable/savelogo"
+                app:tint="@color/colorOnPrimary" />
 
-                <ImageView
-                    android:id="@+id/alertIcon"
-                    android:layout_width="25dp"
-                    android:layout_height="25dp"
-                    android:contentDescription="@string/error"
-                    android:src="@drawable/alert"
-                    android:visibility="gone" />
+        </com.google.android.material.appbar.MaterialToolbar>
 
-                <ImageView
-                    android:layout_width="61dp"
-                    android:layout_height="34dp"
-                    android:importantForAccessibility="no"
-                    android:src="@drawable/savelogo" />
+    </com.google.android.material.appbar.AppBarLayout>
 
-            </androidx.appcompat.widget.Toolbar>
 
-        </com.google.android.material.appbar.AppBarLayout>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="?attr/actionBarSize">
 
+        <!-- Breadcrumb and Count Container -->
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/breadcrumb_container"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="?attr/actionBarSize">
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="8dp"
+            android:layout_marginVertical="@dimen/activity_vertical_margin"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/current_folder"
-                android:layout_width="match_parent"
+            <!-- Horizontal ScrollView for Breadcrumb -->
+            <HorizontalScrollView
+                android:id="@+id/breadcrumb_section"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
-                android:layout_marginVertical="@dimen/activity_vertical_margin"
-                app:layout_constraintEnd_toEndOf="parent"
+                android:overScrollMode="never"
+                android:scrollbars="none"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/folder_count"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
-                <ImageView
-                    android:id="@+id/current_folder_icon"
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    tools:ignore="ContentDescription" />
-
-                <TextView
-                    android:id="@+id/current_folder_name"
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:textSize="20sp"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/current_folder_icon"
-                    tools:text="Folder Name" />
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
 
-                <TextView
-                    android:id="@+id/current_folder_count"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:background="@drawable/pill"
-                    tools:text="1"
-                    android:gravity="center"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    <!-- Space Icon -->
+                    <ImageView
+                        android:id="@+id/space_icon"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:contentDescription="@string/servers"
+                        android:paddingEnd="4dp" />
+
+                    <!-- Space Chip -->
+                    <TextView
+                        android:id="@+id/breadcrumb_space"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:padding="0dp"
+                        android:text="Space Name" />
+
+                    <!-- Separator -->
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/keyboard_arrow_right"
+                        app:tint="@color/colorOnBackground" />
+
+                    <!-- Folder Chip -->
+                    <TextView
+                        android:id="@+id/breadcrumb_folder"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:maxLines="1"
+                        android:padding="0dp"
+                        android:text="Folder Name" />
+
+                    <!-- Add more breadcrumb items as needed -->
+
+                </LinearLayout>
+
+            </HorizontalScrollView>
+
+            <!-- Gradient Fade Effect -->
+            <View
+                android:layout_width="72dp"
+                android:layout_height="0dp"
+                android:layout_gravity="end"
+                android:background="@drawable/gradient_fade"
+                app:layout_constraintBottom_toBottomOf="@id/breadcrumb_section"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/breadcrumb_section" />
+
+            <!-- Folder Count -->
+            <TextView
+                android:id="@+id/folder_count"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:background="@drawable/pill"
+                android:elevation="1dp"
+                android:fontFamily="@font/montserrat"
+                android:gravity="center"
+                android:text="1"
+                android:textColor="@color/colorOnBackground"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        <!--        <androidx.constraintlayout.widget.ConstraintLayout-->
+        <!--            android:id="@+id/current_folder"-->
+        <!--            android:layout_width="match_parent"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            android:layout_marginHorizontal="@dimen/activity_horizontal_margin"-->
+        <!--            android:layout_marginVertical="@dimen/activity_vertical_margin"-->
+        <!--            android:visibility="gone"-->
+        <!--            app:layout_constraintEnd_toEndOf="parent"-->
+        <!--            app:layout_constraintStart_toStartOf="parent"-->
+        <!--            app:layout_constraintTop_toBottomOf="@id/breadcrumb_container">-->
+
+        <!--            <ImageView-->
+        <!--                android:id="@+id/current_folder_icon"-->
+        <!--                android:layout_width="32dp"-->
+        <!--                android:layout_height="32dp"-->
+        <!--                app:layout_constraintBottom_toBottomOf="parent"-->
+        <!--                app:layout_constraintStart_toStartOf="parent"-->
+        <!--                app:layout_constraintTop_toTopOf="parent"-->
+        <!--                tools:ignore="ContentDescription" />-->
+
+        <!--            <TextView-->
+        <!--                android:id="@+id/current_folder_name"-->
+        <!--                android:layout_width="wrap_content"-->
+        <!--                android:layout_height="wrap_content"-->
+        <!--                android:layout_marginStart="16dp"-->
+        <!--                android:textSize="20sp"-->
+        <!--                app:layout_constraintBottom_toBottomOf="parent"-->
+        <!--                app:layout_constraintStart_toEndOf="@id/current_folder_icon"-->
+        <!--                app:layout_constraintTop_toTopOf="parent"-->
+        <!--                tools:text="Folder Name" />-->
+
+        <!--            <TextView-->
+        <!--                android:id="@+id/current_folder_count"-->
+        <!--                android:layout_width="20dp"-->
+        <!--                android:layout_height="20dp"-->
+        <!--                android:background="@drawable/pill"-->
+        <!--                android:gravity="center"-->
+        <!--                app:layout_constraintBottom_toBottomOf="parent"-->
+        <!--                app:layout_constraintEnd_toEndOf="parent"-->
+        <!--                app:layout_constraintTop_toTopOf="parent"-->
+        <!--                tools:text="1" />-->
+
+        <!--                            <com.google.android.material.button.MaterialButton-->
+        <!--                                android:id="@+id/upload_edit_button"-->
+        <!--                                style="@style/Widget.Material3.Button.TextButton"-->
+        <!--                                android:layout_width="wrap_content"-->
+        <!--                                android:layout_height="40dp"-->
+        <!--                                android:paddingEnd="0dp"-->
+        <!--                                android:text="@string/edit"-->
+        <!--                                app:icon="@drawable/ic_low_priority"-->
+        <!--                                app:iconGravity="textStart"-->
+        <!--                                app:layout_constraintBottom_toBottomOf="parent"-->
+        <!--                                app:layout_constraintEnd_toEndOf="parent"-->
+        <!--                                app:layout_constraintTop_toTopOf="parent"-->
+        <!--                                tools:ignore="RtlSymmetry" />-->
+
+        <!--        </androidx.constraintlayout.widget.ConstraintLayout>-->
+
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/pager"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            app:layout_constraintBottom_toTopOf="@id/bottom_nav_bar"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/breadcrumb_container" />
+
+        <net.opendasharchive.openarchive.core.presentation.components.CustomBottomNavBar
+            android:id="@+id/bottom_nav_bar"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/bottom_nav_height"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"/>
+
+
+
+<!--        Custom Bottom Bar-->
+<!--        <LinearLayout-->
+<!--            android:visibility="gone"-->
+<!--            android:id="@+id/bottom_bar"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="@dimen/bottom_nav_height"-->
+<!--            android:background="@drawable/bottom_nav_background"-->
+<!--            android:baselineAligned="false"-->
+<!--            android:orientation="horizontal"-->
+<!--            android:weightSum="3"-->
+<!--            app:layout_constraintBottom_toBottomOf="parent"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintStart_toStartOf="parent">-->
+
+<!--            <RelativeLayout-->
+<!--                android:layout_width="0dp"-->
+<!--                android:layout_height="match_parent"-->
+<!--                android:layout_weight="1">-->
 
 <!--                <com.google.android.material.button.MaterialButton-->
-<!--                    android:id="@+id/upload_edit_button"-->
-<!--                    style="@style/Widget.Material3.Button.TextButton"-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="40dp"-->
-<!--                    android:paddingEnd="0dp"-->
-<!--                    android:text="@string/edit"-->
-<!--                    app:icon="@drawable/ic_low_priority"-->
+<!--                    android:id="@+id/my_media_button"-->
+<!--                    android:layout_width="56dp"-->
+<!--                    android:layout_height="38dp"-->
+<!--                    android:layout_centerHorizontal="true"-->
+<!--                    android:layout_marginTop="8dp"-->
+<!--                    android:layout_marginBottom="0dp"-->
+<!--                    android:backgroundTint="@color/colorBottomNavbar"-->
+<!--                    android:paddingTop="0dp"-->
+<!--                    android:paddingBottom="0dp"-->
+<!--                    app:icon="@drawable/outline_perm_media_24"-->
 <!--                    app:iconGravity="textStart"-->
-<!--                    app:layout_constraintBottom_toBottomOf="parent"-->
-<!--                    app:layout_constraintEnd_toEndOf="parent"-->
-<!--                    app:layout_constraintTop_toTopOf="parent"-->
-<!--                    tools:ignore="RtlSymmetry" />-->
+<!--                    app:iconPadding="0dp"-->
+<!--                    app:iconSize="24dp"-->
+<!--                    app:iconTint="@color/colorOnBottomNavbar"-->
+<!--                    app:rippleColor="@color/c23_light_grey" />-->
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
+<!--                <TextView-->
+<!--                    android:id="@+id/my_media_label"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_below="@id/my_media_button"-->
+<!--                    android:layout_centerHorizontal="true"-->
+<!--                    android:clickable="true"-->
+<!--                    android:focusable="false"-->
+<!--                    android:padding="0dp"-->
+<!--                    android:soundEffectsEnabled="false"-->
+<!--                    android:text="@string/my_media"-->
+<!--                    android:textSize="12sp"-->
+<!--                    tools:ignore="KeyboardInaccessibleWidget" />-->
 
-            <androidx.viewpager2.widget.ViewPager2
-                android:id="@+id/pager"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_marginBottom="2dp"
-                android:layout_marginTop="2dp"
-                app:layout_constraintBottom_toTopOf="@id/bottom_bar"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/current_folder" />
+<!--            </RelativeLayout>-->
 
-            <LinearLayout
-                android:id="@+id/bottom_bar"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/bottom_nav_height"
-                android:background="@drawable/bottom_nav_background"
-                android:orientation="horizontal"
-                android:weightSum="3"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                android:baselineAligned="false">
+<!--            <FrameLayout-->
+<!--                android:layout_width="0dp"-->
+<!--                android:layout_height="match_parent"-->
+<!--                android:layout_weight="1">-->
 
-                <RelativeLayout
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1">
 
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/my_media_button"
-                        android:layout_width="56dp"
-                        android:layout_height="38dp"
-                        android:layout_centerHorizontal="true"
-                        android:layout_marginTop="8dp"
-                        android:layout_marginBottom="0dp"
-                        android:backgroundTint="@color/colorBottomNavbar"
-                        android:paddingTop="0dp"
-                        android:paddingBottom="0dp"
-                        app:icon="@drawable/outline_perm_media_24"
-                        app:iconGravity="textStart"
-                        app:iconPadding="0dp"
-                        app:iconSize="36dp"
-                        app:iconTint="@color/colorOnBottomNavbar"
-                        app:rippleColor="@color/c23_light_grey" />
+<!--                <ImageButton-->
+<!--                    android:id="@+id/add_button"-->
+<!--                    android:layout_width="80dp"-->
+<!--                    android:layout_height="42dp"-->
+<!--                    android:layout_gravity="center_horizontal"-->
+<!--                    android:layout_marginTop="16dp"-->
+<!--                    android:layout_marginBottom="8dp"-->
+<!--                    android:background="@drawable/pill_bg"-->
+<!--                    android:backgroundTint="@color/colorAddButton"-->
+<!--                    android:paddingHorizontal="16dp"-->
+<!--                    android:src="@drawable/baseline_add_24"-->
+<!--                    app:rippleColor="@color/c23_light_grey" />-->
 
-                    <TextView
-                        android:id="@+id/my_media_label"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@id/my_media_button"
-                        android:layout_centerHorizontal="true"
-                        android:clickable="true"
-                        android:focusable="false"
-                        android:padding="0dp"
-                        android:soundEffectsEnabled="false"
-                        android:text="@string/my_media"
-                        android:textSize="12sp"
-                        tools:ignore="KeyboardInaccessibleWidget" />
+<!--            </FrameLayout>-->
 
-                </RelativeLayout>
+<!--            <RelativeLayout-->
+<!--                android:layout_width="0dp"-->
+<!--                android:layout_height="match_parent"-->
+<!--                android:layout_weight="1">-->
 
-                <FrameLayout
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1">
+<!--                <com.google.android.material.button.MaterialButton-->
+<!--                    android:id="@+id/settings_button"-->
+<!--                    android:layout_width="56dp"-->
+<!--                    android:layout_height="38dp"-->
+<!--                    android:layout_centerHorizontal="true"-->
+<!--                    android:layout_marginTop="8dp"-->
+<!--                    android:layout_marginBottom="0dp"-->
+<!--                    android:backgroundTint="@color/colorBottomNavbar"-->
+<!--                    android:paddingTop="0dp"-->
+<!--                    android:paddingBottom="0dp"-->
+<!--                    app:icon="@drawable/ic_settings"-->
+<!--                    app:iconGravity="textStart"-->
+<!--                    app:iconPadding="0dp"-->
+<!--                    app:iconSize="24dp"-->
+<!--                    app:iconTint="@color/colorOnBottomNavbar"-->
+<!--                    app:rippleColor="@color/c23_light_grey" />-->
 
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/add_button"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_horizontal"
-                        android:layout_marginTop="8dp"
-                        android:backgroundTint="@color/colorAddButton"
-                        android:paddingTop="0dp"
-                        android:paddingBottom="0dp"
-                        app:icon="@drawable/baseline_add_white_24"
-                        app:iconGravity="textStart"
-                        app:iconPadding="0dp"
-                        app:iconSize="38dp"
-                        app:iconTint="@color/colorOnAddButton"
-                        app:rippleColor="@color/c23_light_grey" />
+<!--                <TextView-->
+<!--                    android:id="@+id/settings_label"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_below="@id/settings_button"-->
+<!--                    android:layout_centerHorizontal="true"-->
+<!--                    android:clickable="true"-->
+<!--                    android:focusable="false"-->
+<!--                    android:padding="0dp"-->
+<!--                    android:soundEffectsEnabled="false"-->
+<!--                    android:text="@string/action_settings"-->
+<!--                    android:textSize="12sp"-->
+<!--                    tools:ignore="KeyboardInaccessibleWidget" />-->
 
-                </FrameLayout>
+<!--            </RelativeLayout>-->
 
-                <RelativeLayout
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1">
+<!--        </LinearLayout>-->
 
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/settings_button"
-                        android:layout_width="56dp"
-                        android:layout_height="38dp"
-                        android:layout_centerHorizontal="true"
-                        android:layout_marginTop="8dp"
-                        android:layout_marginBottom="0dp"
-                        android:backgroundTint="@color/colorBottomNavbar"
-                        android:paddingTop="0dp"
-                        android:paddingBottom="0dp"
-                        app:icon="@drawable/ic_settings"
-                        app:iconGravity="textStart"
-                        app:iconPadding="0dp"
-                        app:iconSize="36dp"
-                        app:iconTint="@color/colorOnBottomNavbar"
-                        app:rippleColor="@color/c23_light_grey" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
 
-                    <TextView
-                        android:id="@+id/settings_label"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@id/settings_button"
-                        android:layout_centerHorizontal="true"
-                        android:clickable="true"
-                        android:focusable="false"
-                        android:padding="0dp"
-                        android:soundEffectsEnabled="false"
-                        android:text="@string/action_settings"
-                        android:textSize="12sp"
-                        tools:ignore="KeyboardInaccessibleWidget" />
-
-                </RelativeLayout>
-
-            </LinearLayout>
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
-
-    <com.google.android.material.navigation.NavigationView
-        android:id="@+id/folder_bar"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_gravity="end"
-        android:clipChildren="true"
-        android:fitsSystemWindows="true">
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="?attr/actionBarSize"
-            android:animateLayoutChanges="false"
-            android:backgroundTint="@color/background">
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/folders"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_marginStart="24dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/current_space_name" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/spaces"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:alpha="0"
-                android:visibility="gone"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/navigation_drawer_header" />
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/navigation_drawer_header"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:animateLayoutChanges="false"
-                android:background="@color/colorNavigationDrawerBackground"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
-
-                <TextView
-                    android:id="@+id/space_name"
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:layout_marginHorizontal="12dp"
-                    android:drawablePadding="@dimen/padding_small"
-                    android:gravity="center_vertical"
-                    android:textSize="24sp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <View
-                    android:id="@+id/spaces_header_separator"
-                    android:layout_width="match_parent"
-                    android:layout_height="0.5dp"
-                    android:layout_marginVertical="10dp"
-                    android:alpha="0.5"
-                    android:background="@color/colorOnPrimary"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/space_name" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-            <TextView
-                android:id="@+id/current_space_name"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:layout_marginHorizontal="8dp"
-                android:layout_marginStart="12dp"
-                android:layout_marginTop="12dp"
-                android:drawablePadding="@dimen/padding_small"
-                android:gravity="center_vertical"
-                android:textSize="20sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/navigation_drawer_header" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/new_folder"
-                style="?attr/materialButtonOutlinedStyle"
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:layout_margin="30dp"
-                android:text="@string/new_folder"
-                android:textColor="@color/c23_teal_80"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                app:cornerRadius="10dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:strokeColor="@color/c23_teal_80"
-                app:strokeWidth="3dp" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-    </com.google.android.material.navigation.NavigationView>
-
-</androidx.drawerlayout.widget.DrawerLayout>

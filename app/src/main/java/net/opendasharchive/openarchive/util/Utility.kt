@@ -118,6 +118,10 @@ object Utility {
         context.startActivity(i)
     }
 
+    fun showMaterialWarning(context: Context, message: String? = null, positiveButtonText: String = "Ok", completion: (() -> Unit)? = null) {
+        showMaterialMessage(context, "Oops", message, positiveButtonText, completion)
+    }
+
     fun showMaterialMessage(context: Context, title: String = "Oops", message: String? = null, positiveButtonText: String = "Ok", completion: (() -> Unit)? = null) {
         Handler(Looper.getMainLooper()).post {
             MaterialAlertDialogBuilder(context)
@@ -125,6 +129,30 @@ object Utility {
                 .setMessage(message)
                 .setPositiveButton(positiveButtonText) { _, _ ->
                     completion?.invoke()
+                }
+                .show()
+        }
+    }
+
+    fun showMaterialPrompt(
+        context: Context,
+        title: String,
+        message: String? = null,
+        positiveButtonText: String,
+        negativeButtonText: String,
+        completion: (Boolean) -> Unit
+    ) {
+        Handler(Looper.getMainLooper()).post {
+            MaterialAlertDialogBuilder(context)
+                .setTitle(title)
+                .setMessage(message)
+                .setPositiveButton(positiveButtonText) { dialog, _ ->
+                    dialog.dismiss()
+                    completion.invoke(true)
+                }
+                .setNegativeButton(negativeButtonText) { dialog, _ ->
+                    dialog.dismiss()
+                    completion.invoke(false)
                 }
                 .show()
         }

@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
 
+    <string name="navigation_drawer_open">Drawer Open</string>
+    <string name="navigation_drawer_close">Drawer Closed</string>
+
     <!-- Activities -->
     <string name="app_name" translatable="false">Save</string>
     <string name="app_subtext">Archive Your Media\n<a href="#">learn more</a></string>
@@ -150,7 +153,7 @@
     <string name="secret_key">Secret Key</string>
     <string name="info_archiveorg_keys"><b><i>Save</i></b> needs your Internet Archive account\'s API keys to be able to upload media.</string>
     <string name="action_acquire_keys">Acquire Keys</string>
-    <string name="new_folder">ADD FOLDER</string>
+    <string name="new_folder">Add Folder</string>
     <string name="please_do_not_include_special_characters_in_the_name">Please do not include special characters in the name.</string>
     <string name="are_you_sure_you_want_to_remove_this_server_from_the_app">Are you sure you want to remove this server from the app?</string>
     <string name="folder_name_already_exists">Folder name already exists.</string>
@@ -217,7 +220,7 @@
     </string>
     <string name="intro_text_archive">
     <![CDATA[
-    Keep your media verifiable, safe and organized for the long-term by uploading it to private or public servers like Nextcloud or the Internet Archive.<br><br>
+    Keep your media verifiable, safe and organized for the long-term by uploading it to private or public servers like Nextcloud or the Internet Archive.<br>
     Communicate your intentions for future use by adding a <a href="%1$s" style="text-decoration: underline;">Creative Commons License</a>.
     ]]>
     </string>
@@ -233,7 +236,7 @@
     </string>
     <string name="intro_text_encrypt" translatable="false">
     <![CDATA[
-    <b><i>Save</i></b> always uploads over TLS (Transport Layer Security) to protect your media in transit.<br><br>
+    <b><i>Save</i></b> always uploads over TLS (Transport Layer Security) to protect your media in transit.<br>
     To further enhance security, enable <a href="%1$s" style="text-decoration: underline;">Tor</a> to prevent interception of your media from your phone to the server.
     ]]>
     </string>
@@ -259,6 +262,8 @@
     <string name="got_it">Got it</string>
     <string name="do_not_show_me_this_again">Do not show me this again</string>
     <string name="edit_multiple">Edit Multiple</string>
+    <string name="press_and_hold_options_media_screen_title">Add Media Options</string>
+    <string name="press_and_hold_options_media_screen_message">Tap + to upload an image. Press and hold for more options.</string>
     <string name="press_and_hold_to_select_and_edit_multiple_media">Press and hold to select and edit multiple media.</string>
     <string name="once_uploaded_you_will_not_be_able_to_edit_media">Once uploaded, you will not be able to edit media</string>
     <string name="edit_media_info">Edit Media Info</string>
@@ -317,5 +322,26 @@
     <string name="label_create_login">Create one</string>
     <string name="prompt_no_account">No account?</string>
     <string name="action_continue">Continue</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <!-- Preference Titles -->
+    <string name="messages_header">Messages</string>
+    <string name="sync_header">Sync</string>
 
+    <!-- Messages Preferences -->
+    <string name="signature_title">Your signature</string>
+    <string name="reply_title">Default reply action</string>
+
+    <!-- Sync Preferences -->
+    <string name="sync_title">Sync email periodically</string>
+    <string name="attachment_title">Download incoming attachments</string>
+    <string name="attachment_summary_on">Automatically download attachments for incoming emails
+    </string>
+    <string name="attachment_summary_off">Only download attachments when manually requested</string>
+
+    <string name="pref_media_servers">pref_media_servers</string>
+    <string name="pref_media_folders">pref_media_folders</string>
+    <string name="pref_app_passcode" translatable="false">passcode_enabled</string>
+    <string name="pref_title_secure">Secure</string>
+    <string name="pref_title_archive">Archive</string>
 </resources>

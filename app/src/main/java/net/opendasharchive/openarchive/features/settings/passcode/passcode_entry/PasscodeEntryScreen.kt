@@ -32,6 +32,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.flow.collectLatest
 import net.opendasharchive.openarchive.R
 import net.opendasharchive.openarchive.core.presentation.theme.Theme
+import net.opendasharchive.openarchive.features.internetarchive.presentation.login.DefaultScaffoldPreview
 import net.opendasharchive.openarchive.features.settings.passcode.AppHapticFeedbackType
 import net.opendasharchive.openarchive.features.settings.passcode.HapticManager
 import net.opendasharchive.openarchive.features.settings.passcode.components.MessageManager
@@ -179,6 +180,7 @@ fun PasscodeEntryScreenContent(
                         style = TextStyle(
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onBackground
                         ),
                     )
                 }
@@ -194,7 +196,8 @@ fun PasscodeEntryScreenContent(
                         modifier = Modifier.padding(8.dp),
                         style = TextStyle(
                             fontSize = 16.sp,
-                            fontWeight = FontWeight.Bold
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onBackground
                         ),
                     )
                 }
@@ -213,13 +216,15 @@ fun PasscodeEntryScreenContent(
 @Composable
 private fun PasscodeEntryScreenPreview() {
 
-    Theme {
-        PasscodeEntryScreenContent(
-            state = PasscodeEntryScreenState(
-                passcodeLength = 6
-            ),
-            onAction = {},
-            onExit = {},
-        )
+    DefaultScaffoldPreview {
+        Theme {
+            PasscodeEntryScreenContent(
+                state = PasscodeEntryScreenState(
+                    passcodeLength = 6
+                ),
+                onAction = {},
+                onExit = {},
+            )
+        }
     }
 }

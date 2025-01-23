@@ -148,7 +148,7 @@ private fun NumberButton(
                     onClick()
                 }
             )
-            .border(width = 2.dp, color = MaterialTheme.colorScheme.primary, shape = CircleShape)
+            .border(width = 2.dp, color = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.5f), shape = CircleShape)
             .size(72.dp),
         contentAlignment = Alignment.Center
     ) {

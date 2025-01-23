@@ -7,14 +7,15 @@
     android:filterTouchesWhenObscured="true"
     tools:context=".features.onboarding.SpaceSetupActivity">
 
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
         <include
-            android:id="@+id/progress_block"
-            layout="@layout/block_space_setup_progress"
+            android:id="@+id/common_app_bar"
+            layout="@layout/common_app_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
@@ -23,7 +24,7 @@
             android:name="net.opendasharchive.openarchive.features.settings.SpaceSetupFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:layout="@layout/fragment_webdav_setup_license"/>
+            tools:layout="@layout/fragment_space_setup" />
 
     </LinearLayout>
 </ScrollView>

@@ -1,74 +1,77 @@
 package net.opendasharchive.openarchive.features.main
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
+import androidx.core.content.ContextCompat
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import net.opendasharchive.openarchive.FolderAdapter
-import net.opendasharchive.openarchive.FolderAdapterListener
 import net.opendasharchive.openarchive.R
-import net.opendasharchive.openarchive.SpaceAdapter
-import net.opendasharchive.openarchive.SpaceAdapterListener
+import net.opendasharchive.openarchive.core.logger.AppLogger
 import net.opendasharchive.openarchive.databinding.ActivityMainBinding
 import net.opendasharchive.openarchive.db.Project
 import net.opendasharchive.openarchive.db.Space
-import net.opendasharchive.openarchive.extensions.getMeasurments
 import net.opendasharchive.openarchive.features.core.BaseActivity
 import net.opendasharchive.openarchive.features.folders.AddFolderActivity
 import net.opendasharchive.openarchive.features.media.AddMediaDialogFragment
 import net.opendasharchive.openarchive.features.media.AddMediaType
+import net.opendasharchive.openarchive.features.media.ContentPickerFragment
 import net.opendasharchive.openarchive.features.media.MediaLaunchers
 import net.opendasharchive.openarchive.features.media.Picker
 import net.opendasharchive.openarchive.features.media.PreviewActivity
 import net.opendasharchive.openarchive.features.onboarding.Onboarding23Activity
 import net.opendasharchive.openarchive.features.onboarding.SpaceSetupActivity
+import net.opendasharchive.openarchive.features.settings.FoldersActivity
+import net.opendasharchive.openarchive.features.settings.passcode.AppConfig
+import net.opendasharchive.openarchive.features.spaces.SpacesActivity
+import net.opendasharchive.openarchive.services.snowbird.SnowbirdBridge
+import net.opendasharchive.openarchive.services.snowbird.service.SnowbirdService
 import net.opendasharchive.openarchive.upload.UploadService
 import net.opendasharchive.openarchive.util.AlertHelper
 import net.opendasharchive.openarchive.util.Prefs
 import net.opendasharchive.openarchive.util.ProofModeHelper
-import net.opendasharchive.openarchive.util.extensions.Position
+import net.opendasharchive.openarchive.util.Utility
 import net.opendasharchive.openarchive.util.extensions.cloak
 import net.opendasharchive.openarchive.util.extensions.hide
-import net.opendasharchive.openarchive.util.extensions.scaleAndTintDrawable
-import net.opendasharchive.openarchive.util.extensions.scaled
-import net.opendasharchive.openarchive.util.extensions.setDrawable
 import net.opendasharchive.openarchive.util.extensions.show
+import org.koin.android.ext.android.inject
+import timber.log.Timber
 import java.text.NumberFormat
-import kotlin.math.roundToInt
 
 
-class MainActivity : BaseActivity(), FolderAdapterListener, SpaceAdapterListener {
+class MainActivity : BaseActivity() {
+
+    private val appConfig by inject<AppConfig>()
 
     private var mMenuDelete: MenuItem? = null
 
     private var mSnackBar: Snackbar? = null
 
-    private lateinit var mBinding: ActivityMainBinding
+    private lateinit var binding: ActivityMainBinding
     private lateinit var mPagerAdapter: ProjectAdapter
-    private lateinit var mSpaceAdapter: SpaceAdapter
-    private lateinit var mFolderAdapter: FolderAdapter
 
     private lateinit var mediaLaunchers: MediaLaunchers
 
     private var mLastItem: Int = 0
     private var mLastMediaItem: Int = 0
-    private var serverListOffset: Float = 0F
-    private var serverListCurOffset: Float = 0F
 
-    private var mCurrentItem
-        get() = mBinding.pager.currentItem
+    private var mCurrentPagerItem
+        get() = binding.pager.currentItem
         set(value) {
-            mBinding.pager.currentItem = value
+            binding.pager.currentItem = value
             updateBottomNavbar(value)
         }
 
@@ -79,15 +82,38 @@ class MainActivity : BaseActivity(), FolderAdapterListener, SpaceAdapterListener
             }
         }
 
+    private val folderResultLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == RESULT_OK) {
+                val selectedFolderId = result.data?.getLongExtra("SELECTED_FOLDER_ID", -1)
+                if (selectedFolderId != null && selectedFolderId > -1) {
+                    navigateToFolder(selectedFolderId)
+                }
+            }
+        }
+
+
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+        if (isGranted) {
+            Timber.d("Able to post notifications")
+        } else {
+            Timber.d("Need to explain")
+        }
+    }
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        installSplashScreen()
 
-        mBinding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(mBinding.root)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         mediaLaunchers = Picker.register(
             activity = this,
-            root = mBinding.root,
+            root = binding.root,
             project = { getSelectedProject() },
             completed = { media ->
                 refreshCurrentProject()
@@ -97,18 +123,19 @@ class MainActivity : BaseActivity(), FolderAdapterListener, SpaceAdapterListener
                 }
             })
 
-        setSupportActionBar(mBinding.toolbar)
+        setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(false)
         supportActionBar?.title = null
 
         mPagerAdapter = ProjectAdapter(supportFragmentManager, lifecycle)
-        mBinding.pager.adapter = mPagerAdapter
+        binding.pager.adapter = mPagerAdapter
 
-        mBinding.pager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+        binding.pager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageScrolled(
                 position: Int, positionOffset: Float,
                 positionOffsetPixels: Int
             ) {
+                // Do Nothing
             }
 
             override fun onPageSelected(position: Int) {
@@ -125,81 +152,89 @@ class MainActivity : BaseActivity(), FolderAdapterListener, SpaceAdapterListener
             override fun onPageScrollStateChanged(state: Int) {}
         })
 
-        mBinding.spaceName.setOnClickListener {
-            var newAlpha = 0F
+        setupBottomNavBar()
 
-            if (serverListCurOffset != serverListOffset) {
-                serverListCurOffset = serverListOffset
-                mBinding.spaceName.setDrawable(R.drawable.ic_expand_more, Position.End, 0.75)
-            } else {
-                newAlpha = 1F
-                serverListCurOffset = 0F
-                mBinding.spaceName.setDrawable(R.drawable.ic_expand_less, Position.End, 0.75)
+
+        binding.breadcrumbSpace.setOnClickListener {
+            startActivity(Intent(this, SpacesActivity::class.java))
+        }
+
+        binding.breadcrumbFolder.setOnClickListener {
+            val selectedSpaceId = getSelectedSpace()?.id
+            val selectedProjectId = getSelectedProject()?.id
+            val intent = Intent(this, FoldersActivity::class.java)
+            intent.putExtra(
+                FoldersActivity.EXTRA_SELECTED_SPACE_ID,
+                selectedSpaceId
+            ) // Pass the selected space ID
+            intent.putExtra(
+                FoldersActivity.EXTRA_SELECTED_PROJECT_ID,
+                selectedProjectId
+            ) // Pass the selected project ID
+            folderResultLauncher.launch(intent)
+        }
+
+
+        if (appConfig.snowbirdEnabled) {
+            
+            checkNotificationPermissions()
+
+            SnowbirdBridge.getInstance().initialize()
+            val intent = Intent(this, SnowbirdService::class.java)
+            startForegroundService(intent)
+
+            handleIntent(intent)
+        }
+    }
+
+    private fun handleIntent(intent: Intent) {
+        if (intent.action == Intent.ACTION_VIEW) {
+            val uri = intent.data
+            if (uri?.scheme == "save-veilid") {
+                processUri(uri)
             }
+        }
+    }
 
-            mBinding.spaces.visibility = View.VISIBLE
-            mBinding.currentSpaceName.visibility = View.VISIBLE
-            mBinding.newFolder.visibility = View.VISIBLE
-            mBinding.folders.visibility = View.VISIBLE
+    private fun processUri(uri: Uri) {
+        val path = uri.path
+        val queryParams = uri.queryParameterNames.associateWith { uri.getQueryParameter(it) }
+        AppLogger.d("Path: $path, QueryParams: $queryParams")
+    }
 
-            mBinding.spaces.animate().translationY(serverListCurOffset).alpha(newAlpha)
-                .withEndAction {
-                    run {
-                        if (newAlpha == 0F) {
-                            mBinding.spaces.hide(false)
-                        }
-                    }
-                }
-            mBinding.currentSpaceName.animate().alpha(1 - newAlpha)
-            mBinding.newFolder.animate().alpha(1 - newAlpha)
-            mBinding.folders.animate().alpha(1 - newAlpha)
+    private fun setupBottomNavBar() {
+        binding.bottomNavBar.onMyMediaClick = {
+            mCurrentPagerItem = mLastMediaItem
         }
 
-        updateCurrentSpaceAtDrawer()
+        binding.bottomNavBar.onAddClick = {
 
-        mSpaceAdapter = SpaceAdapter(this)
-        mBinding.spaces.layoutManager = LinearLayoutManager(this)
-        mBinding.spaces.adapter = mSpaceAdapter
-
-        mFolderAdapter = FolderAdapter(this)
-        mBinding.folders.layoutManager = LinearLayoutManager(this)
-        mBinding.folders.adapter = mFolderAdapter
-
-        mBinding.newFolder.scaleAndTintDrawable(Position.Start, 0.75)
-        mBinding.newFolder.setOnClickListener {
-            addFolder()
+            if (Prefs.addMediaHint) {
+                addClicked(AddMediaType.GALLERY)
+            } else {
+                AlertHelper.show(
+                    context = this,
+                    message = R.string.press_and_hold_options_media_screen_message,
+                    title = R.string.press_and_hold_options_media_screen_title,
+                )
+                Prefs.addMediaHint = true
+            }
         }
 
-        mBinding.myMediaButton.setOnClickListener {
-            mCurrentItem = mLastMediaItem
-        }
-        mBinding.myMediaLabel.setOnClickListener {
-            // perform click + play ripple animation
-            mBinding.myMediaButton.isPressed = true
-            mBinding.myMediaButton.isPressed = false
-            mBinding.myMediaButton.performClick()
-        }
-
-        mBinding.addButton.setOnClickListener {
-            addClicked(AddMediaType.GALLERY)
-        }
-
-        mBinding.settingsButton.setOnClickListener {
-            mCurrentItem = mPagerAdapter.settingsIndex
-        }
-        mBinding.settingsLabel.setOnClickListener {
-            // perform click + play ripple animation
-            mBinding.settingsButton.isPressed = true
-            mBinding.settingsButton.isPressed = false
-            mBinding.settingsButton.performClick()
+        binding.bottomNavBar.onSettingsClick = {
+            mCurrentPagerItem = mPagerAdapter.settingsIndex
         }
 
         if (Picker.canPickFiles(this)) {
-            mBinding.addButton.setOnLongClickListener {
-                val addMediaDialogFragment = AddMediaDialogFragment()
-                addMediaDialogFragment.show(supportFragmentManager, addMediaDialogFragment.tag)
+            binding.bottomNavBar.setAddButtonLongClickEnabled()
 
-                true
+            binding.bottomNavBar.onAddLongClick = {
+                //val addMediaDialogFragment = AddMediaDialogFragment()
+                //addMediaDialogFragment.show(supportFragmentManager, addMediaDialogFragment.tag)
+
+                val addMediaBottomSheet =
+                    ContentPickerFragment { actionType -> addClicked(actionType) }
+                addMediaBottomSheet.show(supportFragmentManager, ContentPickerFragment.TAG)
             }
 
             supportFragmentManager.setFragmentResultListener(
@@ -223,6 +258,18 @@ class MainActivity : BaseActivity(), FolderAdapterListener, SpaceAdapterListener
         }
     }
 
+    private fun updateBottomNavbar(position: Int) {
+        binding.bottomNavBar.updateSelectedItem(isSettings = position == mPagerAdapter.settingsIndex)
+        if (position == mPagerAdapter.settingsIndex) {
+            binding.breadcrumbContainer.hide()
+        } else {
+            // Show the breadcrumb container only if there's any server available
+            if (Space.current != null) {
+                binding.breadcrumbContainer.show()
+            }
+        }
+    }
+
     @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
     override fun onStart() {
         super.onStart()
@@ -238,56 +285,27 @@ class MainActivity : BaseActivity(), FolderAdapterListener, SpaceAdapterListener
 
         refreshSpace()
 
-        mCurrentItem = mLastItem
+        mCurrentPagerItem = mLastItem
 
         if (!Prefs.didCompleteOnboarding) {
             startActivity(Intent(this, Onboarding23Activity::class.java))
         }
 
         importSharedMedia(intent)
+    }
 
-        if (serverListOffset == 0F) {
-            val dims = mBinding.spaces.getMeasurments()
-            serverListOffset = -dims.second.toFloat()
-            serverListCurOffset = serverListOffset
-            mBinding.spaces.visibility = View.GONE
-            mBinding.spaces.animate().translationY(serverListOffset)
-            mBinding.spaceName.setDrawable(R.drawable.ic_expand_more, Position.End, 0.75)
+
+    private fun navigateToFolder(folderId: Long) {
+        val folderIndex = mPagerAdapter.getProjectIndexById(folderId)
+        if (folderIndex >= 0) {
+            binding.pager.setCurrentItem(folderIndex, true)
+            mCurrentPagerItem = folderIndex
+
+        } else {
+            Toast.makeText(this, "Folder not found", Toast.LENGTH_SHORT).show()
         }
     }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.menu_main, menu)
-        mMenuDelete = menu.findItem(R.id.menu_delete)
-
-        return super.onCreateOptionsMenu(menu)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.menu_folders -> {
-
-                if (mBinding.root.isDrawerOpen(mBinding.folderBar)) {
-                    mBinding.root.closeDrawer(mBinding.folderBar)
-                } else {
-                    mBinding.root.openDrawer(mBinding.folderBar)
-                }
-                true
-            }
-
-            else -> super.onOptionsItemSelected(item)
-        }
-    }
-
-    private fun updateCurrentSpaceAtDrawer() {
-        mBinding.currentSpaceName.text = Space.current?.friendlyName
-        mBinding.currentSpaceName.setDrawable(
-            Space.current?.getAvatar(applicationContext)?.scaled(R.dimen.avatar_size, applicationContext),
-            Position.Start, tint = true
-        )
-        mBinding.currentSpaceName.compoundDrawablePadding =
-            applicationContext.resources.getDimension(R.dimen.padding_small).roundToInt()
-    }
 
     fun updateAfterDelete(done: Boolean) {
         mMenuDelete?.isVisible = !done
@@ -297,25 +315,16 @@ class MainActivity : BaseActivity(), FolderAdapterListener, SpaceAdapterListener
 
     private fun addFolder() {
         mNewFolderResultLauncher.launch(Intent(this, AddFolderActivity::class.java))
-
-        mBinding.root.closeDrawer(mBinding.folderBar)
     }
 
     private fun refreshSpace() {
-//        val currentSpace = Space.current
-
-//        if (currentSpace != null) {
-//            mBinding.space.setDrawable(
-//                currentSpace.getAvatar(this@MainActivity)
-//                    ?.scaled(32, this@MainActivity), Position.Start, tint = false
-//            )
-        mBinding.spaceName.text = getString(R.string.servers) // currentSpace.friendlyName
-//        } else {
-//            mBinding.space.setDrawable(R.drawable.avatar_default, Position.Start, tint = false)
-//            mBinding.space.text = getString(R.string.app_name)
-//        }
-
-        mSpaceAdapter.update(Space.getAll().asSequence().toList())
+        val currentSpace = Space.current
+        currentSpace?.let { space ->
+            binding.breadcrumbSpace.text = space.friendlyName
+            space.setAvatar(binding.spaceIcon)
+        } ?: run {
+            binding.breadcrumbContainer.visibility = View.INVISIBLE
+        }
 
         refreshProjects()
     }
@@ -325,33 +334,27 @@ class MainActivity : BaseActivity(), FolderAdapterListener, SpaceAdapterListener
 
         mPagerAdapter.updateData(projects)
 
-        mBinding.pager.adapter = mPagerAdapter
+        binding.pager.adapter = mPagerAdapter
 
         setProjectId?.let {
-            mCurrentItem = mPagerAdapter.getProjectIndexById(it, default = 0)
+            mCurrentPagerItem = mPagerAdapter.getProjectIndexById(it, default = 0)
         }
-
-        mFolderAdapter.update(projects)
-
-        refreshCurrentProject()
     }
 
     private fun refreshCurrentProject() {
         val project = getSelectedProject()
 
         if (project != null) {
-            mBinding.pager.post {
+            binding.pager.post {
                 mPagerAdapter.notifyProjectChanged(project)
             }
 
-            project.space?.setAvatar(mBinding.currentFolderIcon)
-            mBinding.currentFolderIcon.show()
+            project.space?.setAvatar(binding.spaceIcon)
+            binding.breadcrumbFolder.text = project.description
+            binding.breadcrumbFolder.show()
 
-            mBinding.currentFolderName.text = project.description
-            mBinding.currentFolderName.show()
         } else {
-            mBinding.currentFolderIcon.cloak()
-            mBinding.currentFolderName.cloak()
+            this@MainActivity.binding.breadcrumbFolder.cloak()
         }
 
         refreshCurrentFolderCount()
@@ -361,24 +364,24 @@ class MainActivity : BaseActivity(), FolderAdapterListener, SpaceAdapterListener
         val project = getSelectedProject()
 
         if (project != null) {
-            mBinding.currentFolderCount.text = NumberFormat.getInstance().format(
+            val count = NumberFormat.getInstance().format(
                 project.collections.map { it.size }
                     .reduceOrNull { acc, count -> acc + count } ?: 0)
-            mBinding.currentFolderCount.show()
 
-//            mBinding.uploadEditButton.toggle(project.isUploading)
+            binding.folderCount.text = count
+            binding.folderCount.show()
+
         } else {
-            mBinding.currentFolderCount.cloak()
-//            mBinding.uploadEditButton.hide()
+            binding.folderCount.cloak()
         }
     }
 
-    private fun importSharedMedia(data: Intent?) {
-        if (data?.action != Intent.ACTION_SEND) return
+    private fun importSharedMedia(imageIntent: Intent?) {
+        if (imageIntent?.action != Intent.ACTION_SEND) return
 
-        val uri = data.data ?: if ((data.clipData?.itemCount
+        val uri = imageIntent.data ?: if ((imageIntent.clipData?.itemCount
                 ?: 0) > 0
-        ) data.clipData?.getItemAt(0)?.uri else null
+        ) imageIntent.clipData?.getItemAt(0)?.uri else null
         val path = uri?.path ?: return
 
         if (path.contains(packageName)) return
@@ -417,64 +420,30 @@ class MainActivity : BaseActivity(), FolderAdapterListener, SpaceAdapterListener
         }
     }
 
-//    private fun showAlertIcon() {
-//        mBinding.alertIcon.show()
-//        TooltipCompat.setTooltipText(
-//            mBinding.alertIcon,
-//            getString(R.string.unsecured_internet_connection)
-//        )
-//    }
 
-    override fun projectClicked(project: Project) {
-        mCurrentItem = mPagerAdapter.projects.indexOf(project)
-
-//        mBinding.root.closeDrawer(mBinding.folderBar)
-
-//        mBinding.spacesCard.disableAnimation {
-//            mBinding.spacesCard.hide()
-//        }
-
-        // make sure that even when navigating to settings and picking a folder there
-        // the dataset will get update correctly
-        mFolderAdapter.notifyDataSetChanged()
+    fun getSelectedProject(): Project? {
+        return mPagerAdapter.getProject(mCurrentPagerItem)
     }
 
-    override fun getSelectedProject(): Project? {
-        return mPagerAdapter.getProject(mCurrentItem)
-    }
-
-    override fun spaceClicked(space: Space) {
-        Space.current = space
-
-        refreshSpace()
-
-        mBinding.root.closeDrawer(mBinding.folderBar)
-
-//        mBinding.spacesCard.disableAnimation {
-//            mBinding.spacesCard.hide()
-//        }
-
-        updateCurrentSpaceAtDrawer()
-    }
-
-    override fun addSpaceClicked() {
-        mBinding.root.closeDrawer(mBinding.folderBar)
-
-        startActivity(Intent(this, SpaceSetupActivity::class.java))
-    }
-
-    override fun getSelectedSpace(): Space? {
+    fun getSelectedSpace(): Space? {
         return Space.current
     }
 
     private fun addClicked(mediaType: AddMediaType) {
 
+        // Check if there's any project selected
         if (getSelectedProject() != null) {
-            when(mediaType) {
-                AddMediaType.CAMERA -> Picker.takePhoto(this@MainActivity, mediaLaunchers.cameraLauncher)
+            when (mediaType) {
+                AddMediaType.CAMERA -> Picker.takePhoto(
+                    this@MainActivity,
+                    mediaLaunchers.cameraLauncher
+                )
+
                 AddMediaType.GALLERY -> Picker.pickMedia(this, mediaLaunchers.imagePickerLauncher)
                 AddMediaType.FILES -> Picker.pickFiles(mediaLaunchers.filePickerLauncher)
             }
+        } else if (Space.current == null) { // Check if there's any space available
+            startActivity(Intent(this, SpaceSetupActivity::class.java))
 
         } else {
 
@@ -499,13 +468,48 @@ class MainActivity : BaseActivity(), FolderAdapterListener, SpaceAdapterListener
         }
     }
 
-    private fun updateBottomNavbar(position: Int) {
-        if (position == mPagerAdapter.settingsIndex) {
-            mBinding.myMediaButton.setIconResource(R.drawable.outline_perm_media_24)
-            mBinding.settingsButton.setIconResource(R.drawable.ic_settings_filled)
-        } else {
-            mBinding.myMediaButton.setIconResource(R.drawable.perm_media_24px)
-            mBinding.settingsButton.setIconResource(R.drawable.ic_settings)
+    private fun checkNotificationPermissions() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            when {
+                ContextCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.POST_NOTIFICATIONS
+                ) == PackageManager.PERMISSION_GRANTED -> {
+                    Timber.d("We have notifications permissions")
+                }
+                shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS) -> {
+                    showNotificationPermissionRationale()
+                }
+                else -> {
+                    requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                }
+            }
+        }
+    }
+
+    private fun showNotificationPermissionRationale() {
+        Utility.showMaterialWarning(this, "Accept!") {
+            Timber.d("thing")
+        }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+
+        menuInflater.inflate(R.menu.menu_main, menu)
+
+        return super.onCreateOptionsMenu(menu)
+    }
+
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+//            R.id.snowbird_menu -> {
+//                val intent = Intent(this, SpaceSetupActivity::class.java)
+//                intent.putExtra("snowbird", true)
+//                startActivity(intent)
+//                true
+//            }
+            else -> super.onOptionsItemSelected(item)
         }
     }
 }

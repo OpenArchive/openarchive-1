@@ -7,15 +7,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResult
 import net.opendasharchive.openarchive.R
 import net.opendasharchive.openarchive.databinding.FragmentWebdavSetupLicenseBinding
 import net.opendasharchive.openarchive.db.Space
+import net.opendasharchive.openarchive.features.onboarding.BaseFragment
 import net.opendasharchive.openarchive.features.settings.CcSelector
 import kotlin.properties.Delegates
 
-class WebDavSetupLicenseFragment: Fragment() {
+class WebDavSetupLicenseFragment: BaseFragment() {
 
     private lateinit var binding: FragmentWebdavSetupLicenseBinding
 
@@ -108,4 +108,8 @@ class WebDavSetupLicenseFragment: Fragment() {
             }
         }
     }
+
+    override fun getToolbarTitle() = "Select a License"
+    override fun getToolbarSubtitle(): String? = null
+    override fun shouldShowBackButton() = false
 }

@@ -24,6 +24,7 @@ import net.opendasharchive.openarchive.db.Collection
 import net.opendasharchive.openarchive.db.Media
 import net.opendasharchive.openarchive.db.MediaAdapter
 import net.opendasharchive.openarchive.db.MediaViewHolder
+import net.opendasharchive.openarchive.db.Space
 import net.opendasharchive.openarchive.upload.BroadcastManager
 import net.opendasharchive.openarchive.util.AlertHelper
 import net.opendasharchive.openarchive.util.extensions.toggle
@@ -127,6 +128,22 @@ class MainMediaFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        if (mProjectId == -1L) {
+            val space = Space.current
+            val text: String = if (space != null) {
+                val projects = space.projects
+                if (projects.isNotEmpty()) {
+                     getString(R.string.tap_to_add)
+                } else {
+                    "Tap the button below to add media folder."
+                }
+            } else {
+                "Tap the button below to add media server."
+            }
+
+            binding.tvWelcomeDescr.text = text
+        }
 
         refresh()
     }

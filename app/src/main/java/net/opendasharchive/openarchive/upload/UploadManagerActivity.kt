@@ -59,8 +59,10 @@ class UploadManagerActivity : BaseActivity() {
         mBinding = ActivityUploadManagerBinding.inflate(layoutInflater)
         setContentView(mBinding.root)
 
-        setSupportActionBar(mBinding.toolbar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        setupToolbar(
+            title = getString(R.string.uploads),
+            showBackButton = true
+        )
 
         mFrag = supportFragmentManager.findFragmentById(R.id.fragUploadManager) as? UploadManagerFragment
     }

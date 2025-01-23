@@ -8,11 +8,9 @@
     android:orientation="vertical"
     tools:context=".features.settings.GeneralSettingsActivity">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:theme="@style/ThemeOverlay.AppCompat.DayNight.ActionBar" />
+    <include
+        android:id="@+id/common_app_bar"
+        layout="@layout/common_app_bar" />
 
     <FrameLayout
         android:id="@+id/container"

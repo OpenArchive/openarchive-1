@@ -31,8 +31,8 @@ class EditFolderActivity : BaseActivity() {
         mBinding = ActivityEditFolderBinding.inflate(layoutInflater)
         setContentView(mBinding.root)
 
-        setSupportActionBar(mBinding.toolbar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        setupToolbar("Edit Folder")
 
         mBinding.folderName.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
@@ -44,6 +44,9 @@ class EditFolderActivity : BaseActivity() {
 
                     supportActionBar?.title = newName
                     mBinding.folderName.hint = newName
+
+
+                    setupToolbar(newName)
                 }
             }
 

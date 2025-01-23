@@ -1,14 +1,19 @@
 package net.opendasharchive.openarchive.features.internetarchive.presentation
 
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
-import net.opendasharchive.openarchive.CleanInsightsManager
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Scaffold
+import androidx.compose.ui.Modifier
+import net.opendasharchive.openarchive.core.presentation.theme.Theme
 import net.opendasharchive.openarchive.db.Space
 import net.opendasharchive.openarchive.features.internetarchive.presentation.components.IAResult
 import net.opendasharchive.openarchive.features.internetarchive.presentation.components.getSpace
+import net.opendasharchive.openarchive.features.internetarchive.presentation.login.ComposeAppBar
 import net.opendasharchive.openarchive.features.main.MainActivity
 
 @Deprecated("use jetpack compose")
@@ -19,9 +24,27 @@ class InternetArchiveActivity : AppCompatActivity() {
         val (space, isNewSpace) = intent.extras.getSpace(Space.Type.INTERNET_ARCHIVE)
 
         setContent {
-            InternetArchiveScreen(space, isNewSpace) {
-                finish(it)
+
+            Theme {
+                Scaffold(
+                    topBar = {
+                        ComposeAppBar(
+                            title = if (isNewSpace) "Add Internet Archive" else "Edit Internet Archive",
+                            onNavigationAction = { finish(IAResult.Cancelled) }
+                        )
+                    }
+                ) { paddingValues ->
+                    Box(modifier = Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues)) {
+                        InternetArchiveScreen(space, isNewSpace) {
+                            finish(it)
+                        }
+                    }
+                }
             }
+
+
         }
     }
 
@@ -33,7 +56,7 @@ class InternetArchiveActivity : AppCompatActivity() {
             }
 
             IAResult.Deleted -> Space.navigate(this)
-            else -> Unit
+            IAResult.Cancelled -> onBackPressed()
         }
     }
 }

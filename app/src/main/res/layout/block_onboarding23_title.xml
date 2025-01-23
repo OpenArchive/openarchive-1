@@ -15,7 +15,7 @@
         android:layout_weight="12"
         android:adjustViewBounds="true"
         android:src="@drawable/save_oa"
-        app:tint="@color/colorPrimary" />
+        app:tint="@color/colorTertiary" />
 
     <View
         android:layout_width="match_parent"

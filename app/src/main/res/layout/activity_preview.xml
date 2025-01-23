@@ -5,14 +5,9 @@
     android:layout_height="match_parent"
     android:filterTouchesWhenObscured="true">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <include
+        android:id="@+id/common_app_bar"
+        layout="@layout/common_app_bar" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/media_grid"
@@ -21,15 +16,17 @@
         app:layout_constraintBottom_toTopOf="@id/bt_add_more"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/toolbar" />
+        app:layout_constraintTop_toBottomOf="@id/common_app_bar" />
 
     <Button
+        android:layout_marginVertical="24dp"
         android:id="@+id/bt_add_more"
-        style="?android:attr/buttonBarButtonStyle"
+        style="@style/Widget.Material3.Button.Icon"
+        android:backgroundTint="@color/colorTertiary"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/add_more"
-        app:icon="@drawable/ic_add"
+        app:icon="@drawable/baseline_add_24"
         app:layout_constraintBottom_toTopOf="@id/bottom_bar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -37,6 +34,7 @@
     <LinearLayout
         android:id="@+id/bottom_bar"
         android:layout_width="match_parent"
+        android:layout_marginVertical="24dp"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -45,6 +43,7 @@
         <com.google.android.material.button.MaterialButton
             android:id="@+id/bt_batch_edit"
             style="?android:attr/buttonBarButtonStyle"
+            app:iconTint="@color/colorTertiary"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -53,6 +52,7 @@
         <com.google.android.material.button.MaterialButton
             android:id="@+id/bt_select_all"
             style="?android:attr/buttonBarButtonStyle"
+            android:textColor="@color/colorTertiary"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -61,6 +61,7 @@
         <com.google.android.material.button.MaterialButton
             android:id="@+id/bt_remove"
             style="?android:attr/buttonBarButtonStyle"
+            app:iconTint="@color/colorTertiary"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"

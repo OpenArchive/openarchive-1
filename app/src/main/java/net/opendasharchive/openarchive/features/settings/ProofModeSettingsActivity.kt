@@ -151,8 +151,8 @@ class ProofModeSettingsActivity: BaseActivity() {
         mBinding = ActivitySettingsContainerBinding.inflate(layoutInflater)
         setContentView(mBinding.root)
 
-        setSupportActionBar(mBinding.toolbar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        setupToolbar(getString(R.string.proofmode))
+
 
         supportFragmentManager
             .beginTransaction()

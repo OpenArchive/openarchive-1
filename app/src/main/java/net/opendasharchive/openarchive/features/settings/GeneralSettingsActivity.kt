@@ -158,8 +158,7 @@ class GeneralSettingsActivity: BaseActivity() {
         mBinding = ActivitySettingsContainerBinding.inflate(layoutInflater)
         setContentView(mBinding.root)
 
-        setSupportActionBar(mBinding.toolbar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        setupToolbar(title = getString(R.string.general))
 
         supportFragmentManager
             .beginTransaction()

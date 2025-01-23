@@ -72,9 +72,10 @@ class PreviewActivity : BaseActivity(), View.OnClickListener, PreviewAdapter.Lis
             refresh()
         })
 
-        setSupportActionBar(mBinding.toolbar)
-        supportActionBar?.title = getString(R.string.preview_media)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        setupToolbar(
+            title = getString(R.string.preview_media),
+            showBackButton = true
+        )
 
         mBinding.mediaGrid.layoutManager = GridLayoutManager(this, 2)
         mBinding.mediaGrid.adapter = PreviewAdapter(this)
@@ -87,8 +88,8 @@ class PreviewActivity : BaseActivity(), View.OnClickListener, PreviewAdapter.Lis
 
         if (Picker.canPickFiles(this)) {
             mBinding.btAddMore.setOnLongClickListener {
-                mBinding.addMenu.container.show(animate = true)
-
+                //mBinding.addMenu.container.show(animate = true)
+                initAddMediaBottomSheet()
                 true
             }
 
@@ -121,6 +122,20 @@ class PreviewActivity : BaseActivity(), View.OnClickListener, PreviewAdapter.Lis
         refresh()
     }
 
+    private fun initAddMediaBottomSheet() {
+
+        if (Picker.canPickFiles(this)) {
+            val modalBottomSheet = ContentPickerFragment { action ->
+                when (action) {
+                    AddMediaType.CAMERA -> Picker.takePhoto(this@PreviewActivity, mediaLaunchers.cameraLauncher)
+                    AddMediaType.FILES -> Picker.pickFiles(mediaLaunchers.filePickerLauncher)
+                    AddMediaType.GALLERY -> onClick(mBinding.btAddMore)
+                }
+            }
+            modalBottomSheet.show(supportFragmentManager, ContentPickerFragment.TAG)
+        }
+    }
+
     override fun onResume() {
         super.onResume()
 
@@ -129,56 +144,13 @@ class PreviewActivity : BaseActivity(), View.OnClickListener, PreviewAdapter.Lis
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_preview, menu)
-
         return super.onCreateOptionsMenu(menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            android.R.id.home -> {
-                finish()
-
-                return true
-            }
-
             R.id.menu_upload -> {
-                val queue = {
-                    mMedia.forEach {
-                        it.sStatus = Media.Status.Queued
-                        it.selected = false
-                        it.save()
-                    }
-
-                    finish()
-                }
-
-                if (Prefs.dontShowUploadHint) {
-                    queue()
-                } else {
-                    var doNotShowAgain = false
-
-                    val d = AlertDialog.Builder(ContextThemeWrapper(this, R.style.AlertDialogTheme))
-                        .setTitle(R.string.once_uploaded_you_will_not_be_able_to_edit_media)
-                        .setIcon(R.drawable.baseline_cloud_upload_black_48)
-                        .setPositiveButton(
-                            R.string.got_it
-                        ) { _: DialogInterface, _: Int ->
-                            Prefs.dontShowUploadHint = doNotShowAgain
-                            queue()
-                        }
-                        .setNegativeButton(R.string.lbl_Cancel) { dialog: DialogInterface, _: Int -> dialog.dismiss() }
-                        .setMultiChoiceItems(
-                            arrayOf(getString(R.string.do_not_show_me_this_again)),
-                            booleanArrayOf(false)
-                        )
-                        { _, _, isChecked ->
-                            doNotShowAgain = isChecked
-                        }.show()
-
-                    // hack for making sure this dialog always shows all lines of the pretty long title, even on small screens
-                    d.findViewById<TextView>(androidx.appcompat.R.id.alertTitle)?.maxLines = 99
-
-                }
+                uploadMedia()
                 return true
             }
         }
@@ -261,5 +233,45 @@ class PreviewActivity : BaseActivity(), View.OnClickListener, PreviewAdapter.Lis
         )
 
         Prefs.batchHintShown = true
+    }
+
+    private fun uploadMedia() {
+        val queue = {
+            mMedia.forEach {
+                it.sStatus = Media.Status.Queued
+                it.selected = false
+                it.save()
+            }
+
+            finish()
+        }
+
+        if (Prefs.dontShowUploadHint) {
+            queue()
+        } else {
+            var doNotShowAgain = false
+
+            val d = AlertDialog.Builder(ContextThemeWrapper(this, R.style.AlertDialogTheme))
+                .setTitle(R.string.once_uploaded_you_will_not_be_able_to_edit_media)
+                .setIcon(R.drawable.baseline_cloud_upload_black_48)
+                .setPositiveButton(
+                    R.string.got_it
+                ) { _: DialogInterface, _: Int ->
+                    Prefs.dontShowUploadHint = doNotShowAgain
+                    queue()
+                }
+                .setNegativeButton(R.string.lbl_Cancel) { dialog: DialogInterface, _: Int -> dialog.dismiss() }
+                .setMultiChoiceItems(
+                    arrayOf(getString(R.string.do_not_show_me_this_again)),
+                    booleanArrayOf(false)
+                )
+                { _, _, isChecked ->
+                    doNotShowAgain = isChecked
+                }.show()
+
+            // hack for making sure this dialog always shows all lines of the pretty long title, even on small screens
+            d.findViewById<TextView>(androidx.appcompat.R.id.alertTitle)?.maxLines = 99
+
+        }
     }
 }

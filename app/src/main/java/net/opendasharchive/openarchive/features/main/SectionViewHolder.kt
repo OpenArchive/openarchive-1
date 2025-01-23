@@ -37,8 +37,7 @@ data class SectionViewHolder(
         collection: Collection,
         media: List<Media>
     ) {
-        if (media.any { it.isUploading })
-        {
+        if (media.any { it.isUploading }) {
             timestamp.setText(R.string.uploading)
 
             val uploaded = media.filter { it.sStatus == Media.Status.Uploaded }.size

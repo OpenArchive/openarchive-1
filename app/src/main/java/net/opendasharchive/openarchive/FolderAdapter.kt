@@ -2,13 +2,14 @@ package net.opendasharchive.openarchive
 
 import android.content.Context
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import net.opendasharchive.openarchive.databinding.RvSimpleRowBinding
+import net.opendasharchive.openarchive.databinding.RvFoldersRowBinding
 import net.opendasharchive.openarchive.db.Project
 import java.lang.ref.WeakReference
 
@@ -16,37 +17,65 @@ interface FolderAdapterListener {
 
     fun projectClicked(project: Project)
 
+    fun projectEdit(project: Project)
+
     fun getSelectedProject(): Project?
 }
 
-class FolderAdapter(listener: FolderAdapterListener?) : ListAdapter<Project, FolderAdapter.ViewHolder>(DIFF_CALLBACK), FolderAdapterListener {
+class FolderAdapter(
+    private val context: Context,
+    listener: FolderAdapterListener?,
+    val isArchived: Boolean = false
+) : ListAdapter<Project, FolderAdapter.ViewHolder>(DIFF_CALLBACK), FolderAdapterListener {
 
-    class ViewHolder(private val binding: RvSimpleRowBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class ViewHolder(private val binding: RvFoldersRowBinding) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(listener: WeakReference<FolderAdapterListener>?, project: Project?) {
-            binding.rvTitle.text = project?.description
 
-            if (listener?.get()?.getSelectedProject()?.id == project?.id) {
-                val icon = ContextCompat.getDrawable(binding.rvIcon.context, R.drawable.baseline_folder_white_24)
-                val color = ContextCompat.getColor(binding.rvIcon.context, R.color.colorPrimary)
-                icon?.setTint(color)
-                binding.rvIcon.setImageDrawable(icon)
+            val isSelected = listener?.get()?.getSelectedProject()?.id == project?.id
+            itemView.isSelected = isSelected
+
+            val textColorRes = if (isSelected) R.color.colorTertiary else R.color.colorText
+            val iconColorRes = if (isSelected) R.color.colorTertiary else R.color.colorOnBackground
+            val backgroundRes = if (isSelected) R.drawable.item_background_selector else android.R.color.transparent
+
+            binding.root.setBackgroundResource(backgroundRes)
+
+            binding.rvTitle.text = project?.description
+            binding.rvTitle.setTextColor(ContextCompat.getColor(context, textColorRes))
+
+            val icon = if (isSelected) {
+                ContextCompat.getDrawable(context, R.drawable.baseline_folder_white_24)
             } else {
-                val icon = ContextCompat.getDrawable(binding.rvIcon.context, R.drawable.outline_folder_white_24)
-                val color = ContextCompat.getColor(binding.rvIcon.context, R.color.colorOnBackground)
-                icon?.setTint(color)
-                binding.rvIcon.setImageDrawable(icon)
+                ContextCompat.getDrawable(context, R.drawable.outline_folder_white_24)
             }
 
-            binding.rvTitle.setTextColor(getColor(binding.rvTitle.context,
-                listener?.get()?.getSelectedProject()?.id == project?.id))
+            icon?.setTint(ContextCompat.getColor(context, iconColorRes))
+
+            binding.rvIcon.setImageDrawable(icon)
+
+            if (isArchived) {
+                binding.rvEdit.visibility = View.GONE
+            } else {
+                binding.rvEdit.visibility = View.VISIBLE
+            }
+
+
 
             if (project != null) {
-                binding.root.setOnClickListener {
-                    listener?.get()?.projectClicked(project)
+                binding.textContainer.setOnClickListener {
+                    if (isArchived) {
+                        listener?.get()?.projectEdit(project)
+                    } else {
+                        listener?.get()?.projectClicked(project)
+                    }
                 }
-            }
-            else {
+
+                binding.rvEdit.setOnClickListener {
+                    listener?.get()?.projectEdit(project)
+                }
+
+            } else {
                 binding.root.setOnClickListener(null)
             }
         }
@@ -66,7 +95,7 @@ class FolderAdapter(listener: FolderAdapterListener?) : ListAdapter<Project, Fol
         private var highlightColor: Int? = null
         private var defaultColor: Int? = null
 
-        fun getColor(context: Context, highlight: Boolean): Int {
+        fun getColorOld(context: Context, highlight: Boolean): Int {
             if (highlight) {
                 var color = highlightColor
 
@@ -88,19 +117,27 @@ class FolderAdapter(listener: FolderAdapterListener?) : ListAdapter<Project, Fol
 
             return color
         }
+
+        fun getColor(context: Context, highlight: Boolean): Int {
+            return if (highlight) {
+                ContextCompat.getColor(context, R.color.colorPrimary)
+            } else {
+                ContextCompat.getColor(context, R.color.colorOnBackground)
+            }
+        }
     }
 
-    private val mListener: WeakReference<FolderAdapterListener>?
+    private val mListener: WeakReference<FolderAdapterListener>? = WeakReference(listener)
 
     private var mLastSelected: Project? = null
 
-    init {
-        mListener = WeakReference(listener)
-    }
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        return ViewHolder(RvSimpleRowBinding.inflate(LayoutInflater.from(parent.context),
-            parent, false))
+        return ViewHolder(
+            RvFoldersRowBinding.inflate(
+                LayoutInflater.from(parent.context),
+                parent, false
+            )
+        )
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
@@ -128,11 +165,17 @@ class FolderAdapter(listener: FolderAdapterListener?) : ListAdapter<Project, Fol
         return mLastSelected
     }
 
+    override fun projectEdit(project: Project) {
+        notifyItemChanged(getIndex(getSelectedProject()))
+        notifyItemChanged(getIndex(project))
+
+        mListener?.get()?.projectEdit(project)
+    }
+
     private fun getIndex(project: Project?): Int {
         return if (project == null) {
             -1
-        }
-        else {
+        } else {
             currentList.indexOf(project)
         }
     }

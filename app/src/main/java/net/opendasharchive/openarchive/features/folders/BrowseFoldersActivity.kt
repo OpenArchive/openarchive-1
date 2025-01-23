@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import androidx.activity.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import net.opendasharchive.openarchive.R
 import net.opendasharchive.openarchive.databinding.ActivityBrowseFoldersBinding
@@ -17,9 +18,9 @@ import java.util.Date
 class BrowseFoldersActivity : BaseActivity() {
 
     private lateinit var mBinding: ActivityBrowseFoldersBinding
-    private lateinit var mViewModel: BrowseFoldersViewModel
+    private val mViewModel: BrowseFoldersViewModel by viewModels()
 
-    private var mSelected: BrowseFoldersViewModel.Folder? = null
+    private var mSelected: Folder? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,12 +28,10 @@ class BrowseFoldersActivity : BaseActivity() {
         mBinding = ActivityBrowseFoldersBinding.inflate(layoutInflater)
         setContentView(mBinding.root)
 
-        mViewModel = BrowseFoldersViewModel()
-
-        setSupportActionBar(mBinding.toolbar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
-        title = getString(R.string.browse_existing)
+        setupToolbar(
+            title = getString(R.string.browse_existing),
+            showBackButton = true
+        )
 
         mBinding.rvFolderList.layoutManager = LinearLayoutManager(this)
 
@@ -42,8 +41,9 @@ class BrowseFoldersActivity : BaseActivity() {
         mViewModel.folders.observe(this) {
             mBinding.projectsEmpty.toggle(it.isEmpty())
 
-            mBinding.rvFolderList.adapter = BrowseFoldersAdapter(it) { name ->
-                mSelected = name
+            mBinding.rvFolderList.adapter = BrowseFoldersAdapter(it) { folder ->
+                this.mSelected = folder
+                invalidateOptionsMenu()
             }
         }
 
@@ -58,16 +58,16 @@ class BrowseFoldersActivity : BaseActivity() {
         return super.onCreateOptionsMenu(menu)
     }
 
+    override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
+        val addMenuItem = menu?.findItem(R.id.action_add)
+        addMenuItem?.isVisible = mSelected != null
+        return super.onPrepareOptionsMenu(menu)
+    }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            android.R.id.home -> {
-                finish()
-
-                return true
-            }
             R.id.action_add -> {
                 addFolder(mSelected)
-
                 return true
             }
         }
@@ -75,7 +75,7 @@ class BrowseFoldersActivity : BaseActivity() {
         return super.onOptionsItemSelected(item)
     }
 
-    private fun addFolder(folder: BrowseFoldersViewModel.Folder?) {
+    private fun addFolder(folder: Folder?) {
         if (folder == null) return
         val space = Space.current ?: return
 

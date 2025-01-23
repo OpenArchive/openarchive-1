@@ -6,14 +6,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResult
 import net.opendasharchive.openarchive.databinding.FragmentSpaceSetupBinding
 import net.opendasharchive.openarchive.db.Space
 import net.opendasharchive.openarchive.features.main.MainActivity
+import net.opendasharchive.openarchive.features.onboarding.BaseFragment
 import net.opendasharchive.openarchive.util.extensions.hide
 
-class SpaceSetupFragment : Fragment() {
+class SpaceSetupFragment : BaseFragment() {
 
     private lateinit var mBinding: FragmentSpaceSetupBinding
 
@@ -38,32 +38,12 @@ class SpaceSetupFragment : Fragment() {
             }
         }
 
-//        if (Space.has(Space.Type.GDRIVE) || !playServicesAvailable()) {
-//            mBinding.gdrive.hide()
-//        } else {
-//            mBinding.gdrive.setOnClickListener {
-//                setFragmentResult(
-//                    RESULT_REQUEST_KEY,
-//                    bundleOf(RESULT_BUNDLE_KEY to RESULT_VAL_GDRIVE)
-//                )
-//            }
-//        }
 
-//        mBinding.skipForNowButton.setOnClickListener {
-//            skipSpaceConfig()
-//        }
+        mBinding.snowbird.setOnClickListener {
+            setFragmentResult(RESULT_REQUEST_KEY, bundleOf(RESULT_BUNDLE_KEY to RESULT_VAL_RAVEN))
+        }
 
         return mBinding.root
-    }
-
-    private fun skipSpaceConfig() {
-        startActivity(Intent(context, MainActivity::class.java))
-    }
-
-    private fun playServicesAvailable(): Boolean {
-        return true
-//        return ConnectionResult.SUCCESS == GoogleApiAvailability.getInstance()
-//            .isGooglePlayServicesAvailable(requireContext())
     }
 
     companion object {
@@ -71,7 +51,12 @@ class SpaceSetupFragment : Fragment() {
         const val RESULT_BUNDLE_KEY = "space_setup_result_key"
         const val RESULT_VAL_DROPBOX = "dropbox"
         const val RESULT_VAL_WEBDAV = "webdav"
+        const val RESULT_VAL_RAVEN = "raven"
         const val RESULT_VAL_INTERNET_ARCHIVE = "internet_archive"
         const val RESULT_VAL_GDRIVE = "gdrive"
     }
+
+    override fun getToolbarTitle() = "Select a Server"
+    override fun getToolbarSubtitle(): String? = null
+    override fun shouldShowBackButton() = true
 }
